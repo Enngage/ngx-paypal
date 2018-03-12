@@ -41,8 +41,7 @@ Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `confi
 
 
 ```typescript
-import { Component, OnInit } from '@angular/core';
-
+  import { Component, OnInit } from '@angular/core';
   import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from 'ngx-paypal';
 
   @Component({
@@ -60,7 +59,7 @@ import { Component, OnInit } from '@angular/core';
       this.payPalConfig = new PayPalConfig(PayPalIntegrationType.ClientSideREST, PayPalEnvironment.Sandbox, {
         commit: true,
         client: {
-          sandbox: 'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R'
+          sandbox: 'yourSandboxKey'
         },
         button: {
           label: 'paypal',
