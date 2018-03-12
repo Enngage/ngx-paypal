@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 
 import { PayPalFunding } from '../models/paypal-funding';
 import { PayPalIntegrationType } from '../models/paypal-integration';
@@ -13,10 +13,10 @@ declare var paypal: any;
     selector: 'ngx-paypal',
     template: `
     <div #payPalScriptElem></div>
-    <div [id]="payPalButtonContainerId"></div>
+    <div #payPalButtonContainerElem [id]="payPalButtonContainerId"></div>
     `
 })
-export class NgxPaypalComponent implements OnChanges, OnDestroy {
+export class NgxPaypalComponent implements OnChanges, AfterViewChecked {
 
     /**
      * Configuration for paypal.
@@ -28,7 +28,25 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
      */
     @Input() useGlobalConfig = false;
 
+    /**
+     * Container for paypal script
+     */
     @ViewChild('payPalScriptElem') paypalScriptElem: ElementRef;
+
+    /**
+     * Used for indicating delayed rendered if container is not yet ready in DOM
+     */
+    private registerPayPalScriptWhenContainerIsReady = false;
+
+    /**
+     * Holds current container element
+     */
+    private _payPalButtonContainerElem?: ElementRef;
+    @ViewChild('payPalButtonContainerElem') set payPalButtonContainerElem(content: ElementRef) {
+        if (content) {
+            this._payPalButtonContainerElem = content;
+        }
+    }
 
     /**
     * Name of the global variable where paypal is stored
@@ -43,7 +61,9 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
     /**
      * Id of the element where PayPal button will be rendered
      */
-    public readonly payPalButtonContainerId = 'ngx-paypal-button-container';
+    public payPalButtonContainerId?: string;
+
+    private readonly payPalButtonContainerIdPrefix = 'ngx-paypal-button-container-';
 
     constructor(
     ) {
@@ -56,37 +76,59 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
         }
     }
 
-    ngOnDestroy(): void {
-        // cleanup
-        window[this.paypalWindowName] = undefined;
+    ngAfterViewChecked(): void {
+        // register script if element is ready in dom
+        if (this.registerPayPalScriptWhenContainerIsReady && this._payPalButtonContainerElem) {
+            this.setupScript();
+            this.registerPayPalScriptWhenContainerIsReady = false;
+        }
     }
 
     private initPayPal(): void {
+        // set unique paypal container button id
+        this.payPalButtonContainerId = `${this.payPalButtonContainerIdPrefix}${this.getPseudoUniqueNumber()}`;
         // check if paypal was already register and if so, don't add it to page again
         if (!window[this.paypalWindowName]) {
             // register script
             this.addPaypalScriptToPage();
         } else {
             // just register payment
-            this.setupScript();
+            this.handleScriptRegistering();
         }
+    }
 
+    private getPseudoUniqueNumber(): number {
+        return new Date().valueOf();
     }
 
     private addPaypalScriptToPage(): void {
         const script = document.createElement('script');
         script.innerHTML = '';
         script.src = this.paypalScriptUrl;
-        script.onload = () => this.setupScript();
+        script.onload = () => this.handleScriptRegistering();
         script.async = true;
         script.defer = true;
 
         this.paypalScriptElem.nativeElement.appendChild(script);
     }
 
+    private handleScriptRegistering(): void {
+        // check if container with requested id exists
+        // this is here because dynamically switching between components would cause PayPal to
+        // throw an error if the container already existed before
+        if (this._payPalButtonContainerElem && this._payPalButtonContainerElem.nativeElement &&
+            this._payPalButtonContainerElem.nativeElement.id === this.payPalButtonContainerId) {
+            // container is ready, setup script right away
+            this.setupScript();
+        } else {
+            // container is not ready, delay registering until it is
+            this.registerPayPalScriptWhenContainerIsReady = true;
+        }
+    }
+
     private setupScript(): void {
         // first clear container
-        this.paypalScriptElem.nativeElement.innerHTML = '';
+        this._payPalButtonContainerElem.nativeElement.innerHTML = '';
 
         // render PayPal button as per their docs at
         // https://developer.paypal.com/docs/integration/direct/express-checkout/integration-jsv4/add-paypal-button/
@@ -169,8 +211,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
                     this.config.onCancel(data, actions);
                 }
             }
-
-
         }, `#${this.payPalButtonContainerId}`);
     }
 
