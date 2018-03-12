@@ -39,14 +39,7 @@ export class PayPalConfig {
     /**
      * Button configuration
      */
-    public button?:
-        IPayPalCheckoutButton | IPayPalCreditButton | IPayPalPayButton |
-        IPayPalBuyNowButton | IPayPalButton | IPayPalVerticalButtons;
-
-    /**
-     * Credit button config
-     */
-    public creditButton?: IPayPalCreditButton;
+    public button?: IPayPalButtonStyle;
 
     /**
      * Paypal funding configuration
@@ -81,8 +74,7 @@ export class PayPalConfig {
             onPaymentComplete?: (data: IPayPalPaymentCompleteData, actions: any) => void,
             transactions?: IPayPalTransaction[],
             commit?: boolean,
-            button?: IPayPalCheckoutButton | IPayPalCreditButton | IPayPalPayButton
-            | IPayPalBuyNowButton | IPayPalButton | IPayPalVerticalButtons,
+            button?: IPayPalButtonStyle,
             funding?: IPayPalFunding
         }) {
         Object.assign(this, config);
@@ -125,47 +117,14 @@ export interface IPayPalAmount {
     currency: string;
 }
 
-export interface IPayPalCheckoutButton {
-    label: 'checkout';
+export interface IPayPalButtonStyle {
+    label?: 'checkout' | 'pay' | 'buynow' | 'paypal';
     size?: 'small' | 'medium' | 'large' | 'responsive';
     shape?: 'pill' | 'rect';
     color?: 'gold' | 'blue' | 'silver' | 'black';
-}
-
-export interface IPayPalCreditButton {
-    size?: 'small' | 'medium' | 'large' | 'responsive';
-    shape?: 'pill' | 'rect';
-    tagline: false;
-}
-
-export interface IPayPalPayButton {
-    label: 'pay';
-    size?: 'small' | 'medium' | 'large' | 'responsive';
-    shape?: 'pill' | 'rect';
-    color?: 'gold' | 'blue' | 'silver' | 'black';
-}
-
-export interface IPayPalBuyNowButton {
-    label: 'buynow';
+    tagline?: false;
     fundingicons?: boolean;
     branding?: boolean;
-    size?: 'small' | 'medium' | 'large' | 'responsive';
-    shape?: 'pill' | 'rect';
-    color?: 'gold' | 'blue' | 'silver' | 'black';
-}
-export interface IPayPalButton {
-    tagline: false;
-    label: 'paypal';
-    size?: 'small' | 'medium' | 'large' | 'responsive';
-    shape?: 'pill' | 'rect';
-    color?: 'gold' | 'blue' | 'silver' | 'black';
-}
-
-export interface IPayPalVerticalButtons {
-    layout: 'vertical' | 'horizontal';
-    size?: 'small' | 'medium' | 'large' | 'responsive';
-    shape?: 'pill' | 'rect';
-    color?: 'gold' | 'blue' | 'silver' | 'black';
 }
 
 export interface IPayPalFunding {
