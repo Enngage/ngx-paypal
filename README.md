@@ -4,7 +4,7 @@
 
 ## Angular PayPal
 
-PayPal integration for Angular 5+. For live example visit and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
+PayPal integration for Angular 5+. For live example and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
 
 ## Installation
 
