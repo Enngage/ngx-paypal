@@ -1,22 +1,87 @@
-[![npm version](https://badge.fury.io/js/ngx-captcha.svg)](https://badge.fury.io/js/ngx-captcha)
-[![Build Status](https://api.travis-ci.org/Enngage/ngx-captcha.svg?branch=master)](https://travis-ci.org/Enngage/ngx-captcha)
-[![NPM](https://nodei.co/npm/ngx-captcha.png?mini=true)](https://nodei.co/npm/ngx-captcha/)
+[![npm version](https://badge.fury.io/js/ngx-paypal.svg)](https://badge.fury.io/js/ngx-paypal)
+[![Build Status](https://api.travis-ci.org/Enngage/ngx-paypal.svg?branch=master)](https://travis-ci.org/Enngage/ngx-paypal)
+[![NPM](https://nodei.co/npm/ngx-paypal.png?mini=true)](https://nodei.co/npm/ngx-paypal/)
 
 ## Angular PayPal
 
-PayPal integration for Angular 5+
+PayPal integration for Angular 5+. For live example visit and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/
 
 ## Installation
 
 ```javascript
-npm install ngx-paypal
+npm install ngx-paypal --save
 ```
 
-Import `NgxPayPalModule ` to your module (i.e. `AppModule`) and configure site keys for reCaptcha.
+Import `NgxPayPalModule` in your module (i.e. `AppModule`) 
 
-```javascript
-todo
+### Template
+
+```typescript
+import { NgxPayPalModule } from '../ngx-paypal';
 ```
 
-## Usage
+```typescript
+@NgModule({
+  imports: [
+    NgxPayPalModule,
+    ...
+  ],
+})
+```
+
+### Html code
+
+```html
+<ngx-paypal [config]="payPalConfig"></ngx-paypal>
+```
+
+## TS code
+
+Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `config` input property.
+
+
+```typescript
+import { Component, OnInit } from '@angular/core';
+
+  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from '../ngx-paypal';
+
+  @Component({
+    templateUrl: './main.component.html',
+  })
+  export class MainComponent implements OnInit {
+
+    public payPalConfig?: PayPalConfig;
+
+    ngOnInit(): void {
+      this.initConfig();
+    }
+
+    private initConfig(): void {
+      this.payPalConfig = new PayPalConfig(PayPalIntegrationType.ClientSideREST, PayPalEnvironment.Sandbox, {
+        commit: true,
+        client: {
+          sandbox: 'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R'
+        },
+        button: {
+          label: 'paypal',
+        },
+        onPaymentComplete: (data, actions) => {
+          console.log('OnPaymentComplete');
+        },
+        onCancel: (data, actions) => {
+          console.log('OnCancel');
+        },
+        onError: (err) => {
+          console.log('OnError');
+        },
+        transactions: [{
+          amount: {
+            currency: 'USD',
+            total: 9
+          }
+        }]
+      });
+    }
+  }
+```
 
