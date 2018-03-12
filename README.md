@@ -17,7 +17,7 @@ Import `NgxPayPalModule` in your module (i.e. `AppModule`)
 ### Template
 
 ```typescript
-import { NgxPayPalModule } from '../ngx-paypal';
+import { NgxPayPalModule } from 'ngx-paypal';
 ```
 
 ```typescript
@@ -43,10 +43,10 @@ Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `confi
 ```typescript
 import { Component, OnInit } from '@angular/core';
 
-  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from '../ngx-paypal';
+  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from 'ngx-paypal';
 
   @Component({
-    templateUrl: './main.component.html',
+    templateUrl: './your.component.html',
   })
   export class MainComponent implements OnInit {
 

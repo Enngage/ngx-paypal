@@ -20,7 +20,7 @@ export class ApiComponent implements OnInit, AfterViewChecked {
   public readonly tsCode = `
   import { Component, OnInit } from '@angular/core';
 
-  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from '../ngx-paypal';
+  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from 'ngx-paypal';
 
   @Component({
     templateUrl: './main.component.html',
