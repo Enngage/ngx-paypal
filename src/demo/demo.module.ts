@@ -11,9 +11,7 @@ import { MainComponent } from './main.component';
   imports: [
     RouterModule,
     BrowserModule,
-    NgxPayPalModule.forRoot({
-      clientId: 'id',
-    }),
+    NgxPayPalModule,
     DemoRoutes
   ],
   declarations: [
