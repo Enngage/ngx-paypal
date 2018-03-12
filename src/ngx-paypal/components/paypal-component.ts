@@ -174,16 +174,19 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
         }, `#${this.payPalButtonContainerId}`);
     }
 
-    private getClient(): IPaypalClient {
+    private getClient(): IPaypalClient | undefined {
         if (this.config.integrationType === PayPalIntegrationType.ClientSideREST) {
             if (!this.config.client) {
                 throw Error(`You need to setup client information when using client side integration`);
             }
+
+            return {
+                production: this.config.client.production,
+                sandbox: this.config.client.sandbox
+            };
         }
-        return {
-            production: this.config.client.production,
-            sandbox: this.config.client.sandbox
-        };
+
+        return undefined;
     }
 
     private getFunding(): {
