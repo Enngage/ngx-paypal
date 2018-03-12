@@ -1,0 +1,14 @@
+# Ignore everything
+*
+
+# But descend into directories
+!*/
+
+# Recursively allow files under subtree
+!/definitions/**
+!/ngx-captcha-dist/**
+!package.json
+!.npmignore
+!*.md
+
+
