@@ -43,7 +43,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
     /**
      * Id of the element where PayPal button will be rendered
      */
-    private readonly payPalButtonContainerId = 'ngx-paypal-button-container';
+    public readonly payPalButtonContainerId = 'ngx-paypal-button-container';
 
     constructor(
     ) {
