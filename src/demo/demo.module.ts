@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 import { NgxPayPalModule } from '../ngx-paypal';
+import { ApiComponent } from './api.component';
 import { AppComponent } from './app.component';
 import { DemoRoutes } from './demo.routes';
 import { MainComponent } from './main.component';
@@ -16,7 +17,8 @@ import { MainComponent } from './main.component';
   ],
   declarations: [
     AppComponent,
-    MainComponent
+    MainComponent,
+    ApiComponent
   ],
 
   bootstrap: [AppComponent]

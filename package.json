@@ -11,12 +11,12 @@
     "e2e": "ng e2e",
     "build-prod": "gulp build",
     "prepublishOnly": "npm run build-prod",
-    "build-gh-pages": "ng build --prod --base-href \"https://enngage.github.io/ngx-captcha/\"",
+    "build-gh-pages": "ng build --prod --base-href \"https://enngage.github.io/ngx-paypal/\"",
     "publish-gh-pages": "ngh"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Enngage/ngx-captcha"
+    "url": "https://github.com/Enngage/ngx-paypal"
   },
   "author": "richard sustek",
   "description": "Paypal integration for Angular 5+",

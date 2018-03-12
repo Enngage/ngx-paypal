@@ -5,9 +5,9 @@ import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from '../ngx-p
 declare var PR: any;
 
 @Component({
-  templateUrl: './main.component.html',
+  templateUrl: './api.component.html',
 })
-export class MainComponent implements OnInit, AfterViewChecked {
+export class ApiComponent implements OnInit, AfterViewChecked {
 
   public payPalConfig?: PayPalConfig;
 
