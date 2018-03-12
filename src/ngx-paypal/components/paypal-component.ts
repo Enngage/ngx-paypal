@@ -128,6 +128,10 @@ export class NgxPaypalComponent implements OnChanges, AfterViewChecked {
 
     private setupScript(): void {
         // first clear container
+        if (!this._payPalButtonContainerElem) {
+            throw Error(`Cannot setup script because paypal button container with id '${this.payPalButtonContainerId}' is not yet ready`);
+        }
+
         this._payPalButtonContainerElem.nativeElement.innerHTML = '';
 
         // render PayPal button as per their docs at
