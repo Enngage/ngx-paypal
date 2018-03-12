@@ -6,7 +6,7 @@
 
 # Recursively allow files under subtree
 !/definitions/**
-!/ngx-captcha-dist/**
+!/ngx-paypal-dist/**
 !package.json
 !.npmignore
 !*.md
