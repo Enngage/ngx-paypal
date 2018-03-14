@@ -1,6 +1,6 @@
 import { AfterViewChecked, Component, OnInit } from '@angular/core';
 
-import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from '../ngx-paypal';
+import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from '../../src';
 
 declare var PR: any;
 

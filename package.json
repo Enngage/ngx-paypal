@@ -9,10 +9,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-prod": "gulp build",
     "prepublishOnly": "npm run build-prod",
-    "build-gh-pages": "ng build --prod --base-href \"https://enngage.github.io/ngx-paypal/\"",
-    "publish-gh-pages": "ngh"
+    "build-demo-gh-pages": "ng build --prod --base-href \"https://enngage.github.io/ngx-paypal/\"",
+    "publish-demo-gh-pages": "ngh",
+    "transpile": "ngc -p ./src/tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -26,11 +26,13 @@
     "Paypal integration angular"
   ],
   "private": false,
-  "dependencies": {
-    "@angular/animations": "^5.2.8",
-    "@angular/common": "^5.2.8",
-    "@angular/compiler": "^5.2.8",
+  "peerDependencies": {
     "@angular/core": "^5.2.8",
+    "@angular/common": "^5.2.0"
+  },
+  "devDependencies": {
+    "@angular/animations": "^5.2.8",
+    "@angular/compiler": "^5.2.8",
     "@angular/forms": "^5.2.8",
     "@angular/http": "^5.2.8",
     "@angular/platform-browser": "^5.2.8",
@@ -38,9 +40,7 @@
     "@angular/router": "^5.2.8",
     "core-js": "^2.5.3",
     "rxjs": "^5.5.6",
-    "zone.js": "^0.8.20"
-  },
-  "devDependencies": {
+    "zone.js": "^0.8.20",
     "@angular/cli": "~1.7.3",
     "@angular/compiler-cli": "~5.2.8",
     "@angular/language-service": "~5.2.8",
@@ -58,12 +58,8 @@
     "protractor": "~5.3.0",
     "ts-node": "~5.0.1",
     "tslint": "~5.9.1",
-    "typescript": "~2.6.0",
-    "gulp": "3.9.1",
-    "gulp-typescript": "4.0.1",
-    "gulp-clean": "0.4.0",
-    "merge2": "1.2.1"
+    "typescript": "~2.6.0"
   },
-  "main": "./ngx-paypal-dist/index.js",
-  "types": "./ngx-paypal-dist/index.d.ts"
+  "main": "./ngx-dist/src/index.js",
+  "types": "./ngx-dist/src/index.d.ts"
 }
