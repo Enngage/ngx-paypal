@@ -26,6 +26,9 @@
     "Paypal integration angular"
   ],
   "private": false,
+  "peerDependencies": {
+    "@angular/core": ">=5.0.0"
+  },
   "devDependencies": {
     "@angular/core": "^5.2.8",
     "@angular/common": "^5.2.8",
