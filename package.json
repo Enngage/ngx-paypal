@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "prepublishOnly": "npm run build-prod",
+    "prepublishOnly": "npm run transpile",
     "build-demo-gh-pages": "ng build --prod --base-href \"https://enngage.github.io/ngx-paypal/\"",
     "publish-demo-gh-pages": "ngh",
     "transpile": "ngc -p ./src/tsconfig.json"
