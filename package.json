@@ -26,11 +26,9 @@
     "Paypal integration angular"
   ],
   "private": false,
-  "peerDependencies": {
-    "@angular/core": "^5.2.8",
-    "@angular/common": "^5.2.0"
-  },
   "devDependencies": {
+    "@angular/core": "^5.2.8",
+    "@angular/common": "^5.2.8",
     "@angular/animations": "^5.2.8",
     "@angular/compiler": "^5.2.8",
     "@angular/forms": "^5.2.8",
@@ -39,7 +37,7 @@
     "@angular/platform-browser-dynamic": "^5.2.8",
     "@angular/router": "^5.2.8",
     "core-js": "^2.5.3",
-    "rxjs": "^5.5.6",
+    "rxjs": "^5.5.7",
     "zone.js": "^0.8.20",
     "@angular/cli": "~1.7.3",
     "@angular/compiler-cli": "~5.2.8",
