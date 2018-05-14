@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 
 import { PayPalFunding } from '../models/paypal-funding';
 import { PayPalIntegrationType } from '../models/paypal-integration';
@@ -16,7 +16,7 @@ declare var paypal: any;
     <div #payPalButtonContainerElem [id]="payPalButtonContainerId"></div>
     `
 })
-export class NgxPaypalComponent implements OnChanges, AfterViewChecked {
+export class NgxPaypalComponent implements OnChanges, AfterViewInit {
 
     /**
      * Configuration for paypal.
@@ -76,7 +76,7 @@ export class NgxPaypalComponent implements OnChanges, AfterViewChecked {
         }
     }
 
-    ngAfterViewChecked(): void {
+    ngAfterViewInit(): void {
         // register script if element is ready in dom
         if (this.registerPayPalScriptWhenContainerIsReady && this._payPalButtonContainerElem) {
             this.setupScript();
@@ -90,7 +90,7 @@ export class NgxPaypalComponent implements OnChanges, AfterViewChecked {
         // check if paypal was already register and if so, don't add it to page again
         if (!window[this.paypalWindowName]) {
             // register script
-            this.addPaypalScriptToPage();
+            this.addPayPalScriptToPage();
         } else {
             // just register payment
             this.handleScriptRegistering();
@@ -101,7 +101,7 @@ export class NgxPaypalComponent implements OnChanges, AfterViewChecked {
         return new Date().valueOf();
     }
 
-    private addPaypalScriptToPage(): void {
+    private addPayPalScriptToPage(): void {
         const script = document.createElement('script');
         script.innerHTML = '';
         script.src = this.paypalScriptUrl;
@@ -134,9 +134,13 @@ export class NgxPaypalComponent implements OnChanges, AfterViewChecked {
 
         this._payPalButtonContainerElem.nativeElement.innerHTML = '';
 
+        if (!window[this.paypalWindowName]) {
+            throw Error('PayPal script is not available', );
+        }
+
         // render PayPal button as per their docs at
         // https://developer.paypal.com/docs/integration/direct/express-checkout/integration-jsv4/add-paypal-button/
-        paypal.Button.render({
+        window[this.paypalWindowName].Button.render({
             // set environment
             env: this.config.environment.toString(),
 
