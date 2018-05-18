@@ -256,9 +256,9 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit {
             });
         }
 
-        if (this.config.funding.allowed) {
-            this.config.funding.allowed.forEach(type => {
-                allowed.push(this.mapFundingType(type));
+        if (this.config.funding.disallowed) {
+            this.config.funding.disallowed.forEach(type => {
+                disallowed.push(this.mapFundingType(type));
             });
         }
 
