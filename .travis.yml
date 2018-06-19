@@ -5,4 +5,4 @@ node_js:
 before_script:
 - npm install
 script: 
-- ng build --aot
+- ng build ngx-paypal-lib

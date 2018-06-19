@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 
-import { PayPalFunding } from '..';
+import { PayPalFunding } from './paypal-funding';
 import { PayPalEnvironment } from './paypal-environment';
 import { PayPalIntegrationType } from './paypal-integration';
 
@@ -110,6 +110,7 @@ export interface IPaypalClient {
 
 export interface IPayPalTransaction {
     amount: IPayPalAmount;
+    custom?: string;
 }
 
 export interface IPayPalAmount {

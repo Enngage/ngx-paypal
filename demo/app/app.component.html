@@ -1,0 +1,117 @@
+<h1>Angular PayPal</h1>
+
+<div class="mt-2">
+    Supported versions: <strong>Angular 6+</strong>
+</div>
+
+<div class="alert alert-warning mt-2" role="alert">
+  More features will be added depending on how much traction this gets. <a href="https://github.com/Enngage/ngx-paypal">Star repo</a>.
+</div>
+
+<h2  class="mt-3">
+    Live Preview (Sandbox - client side integration)
+</h2>
+
+<div class="mt-2">
+    <ngx-paypal [config]="payPalConfig"></ngx-paypal>
+</div>
+
+<h2 class="mt-3">
+    Installation
+</h2>
+
+<div class="mt-2">
+    <pre>
+        <code [innerText]="npmCode"></code>
+        <code [innerText]="moduleInstallation"></code>
+    </pre>
+</div>
+
+<h2>
+    Usage
+</h2>
+
+<div class="mt-2">
+    <pre >
+        <code [innerText]="usageCodeTs"></code>
+        <code [innerText]="htmlCode"></code>
+    </pre>
+</div>
+
+<h2>
+    Configuration (<em>PayPalConfig</em>)
+</h2>
+
+<div class="mt-2">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Property</th>
+                <th scope="col">Type</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>integrationType</td>
+                <td>PayPalIntegrationType</td>
+                <td>Type of the integration (client | server)</td>
+            </tr>
+            <tr>
+                <td>environment</td>
+                <td>PayPalEnvironment</td>
+                <td>Environment (sandbox | production)</td>
+            </tr>
+            <tr>
+                <td>commit</td>
+                <td>boolean</td>
+                <td>SShow 'Pay Now' button config</td>
+            </tr>
+            <tr>
+                <td>payment</td>
+                <td>() => Observable&#x3C;string&#x3E;</td>
+                <td>Called to create new payment for server side integration</td>
+            </tr>
+            <tr>
+                <td>onAuthorize</td>
+                <td>(data: IPayPalPaymentCompleteData, actions: any) =&#x3E; Observable&#x3C;void&#x3E;</td>
+                <td>Called to execute payment for server side integration</td>
+            </tr>
+            <tr>
+                <td>client</td>
+                <td>IPaypalClient</td>
+                <td>Client tokens for client side integration</td>
+            </tr>
+            <tr>
+                <td>transactions</td>
+                <td>IPayPalTransaction[]</td>
+                <td>Array of transaction, required for client side integration</td>
+            </tr>
+            <tr>
+                <td>onPaymentComplete</td>
+                <td>(data: IPayPalPaymentCompleteData, actions: any) => void</td>
+                <td>Called for client side integration when payment is executed</td>
+            </tr>
+            <tr>
+                <td>button</td>
+                <td>IPayPalButtonStyle</td>
+                <td>Button configuration</td>
+            </tr>
+            <tr>
+                <td>funding</td>
+                <td>IPayPalFunding</td>
+                <td>Paypal funding configuration</td>
+            </tr>
+            <tr>
+                <td>onError</td>
+                <td>(err: any) => void</td>
+                <td>Called when PayPal experiences an error</td>
+            </tr>
+            <tr>
+                <td>onCancel</td>
+                <td>(data: IPayPalCancelPayment, actions: any) => void</td>
+                <td>Called when user cancels payment</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
