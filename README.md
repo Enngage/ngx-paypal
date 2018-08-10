@@ -6,6 +6,8 @@
 
 PayPal integration for Angular 6+. For live example and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
 
+This library is based on [https://developer.paypal.com/docs/checkout/integrate/#1-get-the-code](PayPal's checkout integration). Please refer to this documentation for description of API options and their meaning.
+
 ## Installation
 
 ```javascript
