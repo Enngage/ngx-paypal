@@ -6,7 +6,7 @@
 
 PayPal integration for Angular 6+. For live example and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
 
-This library is based on [https://developer.paypal.com/docs/checkout/integrate/#1-get-the-code](PayPal's checkout integration). Please refer to this documentation for description of API options and their meaning.
+This library is based on [PayPal's checkout integration](https://developer.paypal.com/docs/checkout/integrate/#1-get-the-code). Please refer to this documentation for description of API options and their meaning.
 
 ## Installation
 
@@ -61,7 +61,7 @@ Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `confi
       this.payPalConfig = new PayPalConfig(PayPalIntegrationType.ClientSideREST, PayPalEnvironment.Sandbox, {
         commit: true,
         client: {
-          sandbox: 'yourSandboxKey'
+          sandbox: 'yourSandboxClientId',
         },
         button: {
           label: 'paypal',
