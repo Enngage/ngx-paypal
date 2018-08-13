@@ -49,7 +49,7 @@ export class AppComponent implements AfterViewInit, OnInit {
       this.payPalConfig = new PayPalConfig(PayPalIntegrationType.ClientSideREST, PayPalEnvironment.Sandbox, {
         commit: true,
         client: {
-          sandbox: 'yourSandboxKey'
+          sandbox: 'yourSandboxClientId',
         },
         button: {
           label: 'paypal',
