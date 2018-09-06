@@ -1,4 +1,16 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnDestroy,
+    SimpleChanges,
+    ViewChild,
+} from '@angular/core';
+import { interval, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { PayPalFunding } from '../models/paypal-funding';
 import { PayPalIntegrationType } from '../models/paypal-integration';
@@ -10,13 +22,14 @@ import { IPaypalClient, IPayPalPaymentCompleteData, PayPalConfig } from '../mode
 declare var paypal: any;
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ngx-paypal',
     template: `
     <div #payPalScriptElem></div>
     <div #payPalButtonContainerElem [id]="payPalButtonContainerId"></div>
     `
 })
-export class NgxPaypalComponent implements OnChanges, AfterViewInit {
+export class NgxPaypalComponent implements OnChanges, AfterViewInit, OnDestroy {
 
     /**
      * Configuration for paypal.
@@ -49,9 +62,24 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit {
     }
 
     /**
+     * Polling interval if paypal script is pending
+     */
+    private readonly defaultPollInterval = 50;
+
+    /**
+     * Polling will stop after polling reaches this number
+     */
+    private readonly maximumPollWaitTime = 5000;
+
+    /**
     * Name of the global variable where paypal is stored
     */
     private readonly paypalWindowName = 'paypal';
+
+    /**
+     * Name of the global variable indicating that script was initiated (added to page)
+     */
+    private readonly paypalWindowScriptInitiated = 'ngx-paypal-script-initiated';
 
     /**
      * PayPal integration script url
@@ -64,6 +92,8 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit {
     public payPalButtonContainerId?: string;
 
     private readonly payPalButtonContainerIdPrefix = 'ngx-paypal-button-container-';
+
+    private readonly ngUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
     ) {
@@ -84,13 +114,25 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit {
         }
     }
 
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
     private initPayPal(): void {
         // set unique paypal container button id
         this.payPalButtonContainerId = `${this.payPalButtonContainerIdPrefix}${this.getPseudoUniqueNumber()}`;
         // check if paypal was already register and if so, don't add it to page again
         if (!window[this.paypalWindowName]) {
-            // register script
-            this.addPayPalScriptToPage();
+            // check if script is pending
+            if (window[this.paypalWindowScriptInitiated] === true) {
+                this.pollUntilScriptAvailable();
+            } else {
+                // register script and set global flag
+                window[this.paypalWindowScriptInitiated] = true;
+                this.addPayPalScriptToPage();
+            }
+
         } else {
             // just register payment
             this.handleScriptRegistering();
@@ -99,6 +141,34 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit {
 
     private getPseudoUniqueNumber(): number {
         return new Date().valueOf();
+    }
+
+    /**
+     * Used when there are multiple paypal components on the same page beacuse only 1 of them
+     * may register paypal script. The other has to be polling until paypal is available or component destroyed
+     */
+    private pollUntilScriptAvailable(): void {
+        const obs = interval(this.defaultPollInterval)
+            .pipe(
+                takeUntil(this.ngUnsubscribe),
+                map((x) => {
+                    if (x >= this.maximumPollWaitTime) {
+                        console.warn(`PayPal script was not loaded after '${this.maximumPollWaitTime}' maximum polling time.`);
+                        obs.unsubscribe();
+                        return;
+                    }
+
+                    // check if paypal script exists
+                    if (window[this.paypalWindowName]) {
+                        // register script
+                        this.handleScriptRegistering();
+
+                        // stop execution
+                        obs.unsubscribe();
+                    }
+                })
+            )
+            .subscribe();
     }
 
     private addPayPalScriptToPage(): void {
@@ -135,7 +205,7 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit {
         this._payPalButtonContainerElem.nativeElement.innerHTML = '';
 
         if (!window[this.paypalWindowName]) {
-            throw Error('PayPal script is not available', );
+            throw Error('PayPal script is not available');
         }
 
         // render PayPal button as per their docs at
