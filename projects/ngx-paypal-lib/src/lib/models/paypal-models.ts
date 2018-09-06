@@ -52,6 +52,11 @@ export class PayPalConfig {
     public onError?: (err: any) => void;
 
     /**
+     * This handler will be called for every click on the PayPal button
+     */
+    public onClick?: () => void;
+
+    /**
      * Called when user cancels payment
      */
     public onCancel?: (data: IPayPalCancelPayment, actions: any) => void;
@@ -67,6 +72,7 @@ export class PayPalConfig {
         public environment: PayPalEnvironment,
         config: {
             onError?: (err: any) => void,
+            onClick?: () => void,
             onCancel?: (data: IPayPalCancelPayment, actions: any) => void,
             payment?: () => Observable<string>,
             onAuthorize?: (data: IPayPalPaymentCompleteData, actions: any) => Observable<void>,

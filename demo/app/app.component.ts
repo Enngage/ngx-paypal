@@ -108,6 +108,9 @@ export class AppComponent implements AfterViewInit, OnInit {
         onError: err => {
           console.log('OnError');
         },
+        onClick: () => {
+          console.log('onClick');
+        },
         transactions: [
           {
             amount: {
