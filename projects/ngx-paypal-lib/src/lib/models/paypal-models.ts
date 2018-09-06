@@ -123,6 +123,7 @@ export interface IPayPalButtonStyle {
     size?: 'small' | 'medium' | 'large' | 'responsive';
     shape?: 'pill' | 'rect';
     color?: 'gold' | 'blue' | 'silver' | 'black';
+    layout?: 'horizontal' | 'vertical';
     tagline?: false;
     fundingicons?: boolean;
     branding?: boolean;

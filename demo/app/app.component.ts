@@ -53,6 +53,7 @@ export class AppComponent implements AfterViewInit, OnInit {
         },
         button: {
           label: 'paypal',
+          layout: 'vertical'
         },
         onPaymentComplete: (data, actions) => {
           console.log('OnPaymentComplete');
@@ -95,7 +96,8 @@ export class AppComponent implements AfterViewInit, OnInit {
             'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R'
         },
         button: {
-          label: 'paypal'
+          label: 'paypal',
+          layout: 'vertical'
         },
         onPaymentComplete: (data, actions) => {
           console.log('OnPaymentComplete');
