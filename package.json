@@ -3,11 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "ngh-local": "./node_modules/.bin/ngh",
     "build:demo": "ng build",
     "serve:demo": "ng serve",
-    "build-demo-gh-pages": "ng build --prod",
-    "publish-demo-gh-pages": "npx ngh --no-silent --dir dist-demo --branch=gh-pages"
+    "build-demo-gh-pages": "ng build --prod"
   },
   "private": true,
   "dependencies": {

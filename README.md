@@ -86,3 +86,20 @@ Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `confi
   }
 ```
 
+### Publishing lib
+
+Under `projects\ngx-paypal-lib` run 
+
+```
+npm run publish-lib
+```
+
+### Publishing demo app
+
+Under root, generate demo app with
+
+```
+npm run build-demo-gh-pages
+npx ngh --dir=dist-demo
+```
+
