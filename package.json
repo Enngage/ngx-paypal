@@ -7,7 +7,7 @@
     "build:demo": "ng build",
     "serve:demo": "ng serve",
     "build-demo-gh-pages": "ng build --prod",
-    "publish-demo-gh-pages": "npx ngh --no-silent --dir dist-demo"
+    "publish-demo-gh-pages": "npx ngh --no-silent --dir dist-demo --branch=gh-pages"
   },
   "private": true,
   "dependencies": {
