@@ -1,8 +1,0 @@
-dist: trusty
-language: node_js
-node_js:
-- "stable"
-before_script:
-- npm install
-script: 
-- ng build ngx-paypal-lib
