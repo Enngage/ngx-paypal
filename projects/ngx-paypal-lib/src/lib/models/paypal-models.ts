@@ -61,6 +61,11 @@ export class PayPalConfig {
      */
     public onCancel?: (data: IPayPalCancelPayment, actions: any) => void;
 
+    /**
+     * Can be used to validation as can be seen here: https://developer.paypal.com/demo/checkout/#/pattern/validation
+     */
+    public validate?: (actions: any) => void;
+
     constructor(
         /**
          * Type of the integration
@@ -73,6 +78,7 @@ export class PayPalConfig {
         config: {
             onError?: (err: any) => void,
             onClick?: () => void,
+            validate?: (actions: any) => void;
             onCancel?: (data: IPayPalCancelPayment, actions: any) => void,
             payment?: () => Observable<string>,
             onAuthorize?: (data: IPayPalPaymentCompleteData, actions: any) => Observable<void>,

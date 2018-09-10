@@ -293,6 +293,11 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit, OnDestroy {
                 if (this.config.onClick) {
                     this.config.onClick();
                 }
+            },
+            validate: (actions) => {
+                if (this.config.validate) {
+                    this.config.validate(actions);
+                }
             }
         }, `#${this.payPalButtonContainerId}`);
     }

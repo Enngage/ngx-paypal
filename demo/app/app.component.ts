@@ -64,6 +64,9 @@ export class AppComponent implements AfterViewInit, OnInit {
         onError: (err) => {
           console.log('OnError');
         },
+        validate: (actions) => {
+          console.log('validate');
+        },
         transactions: [{
           amount: {
             currency: 'USD',
@@ -110,6 +113,9 @@ export class AppComponent implements AfterViewInit, OnInit {
         },
         onClick: () => {
           console.log('onClick');
+        },
+        validate: (actions) => {
+          console.log(actions);
         },
         transactions: [
           {
