@@ -85,6 +85,7 @@ export class PayPalConfig {
             client?: IPaypalClient,
             onPaymentComplete?: (data: IPayPalPaymentCompleteData, actions: any) => void,
             transactions?: IPayPalTransaction[],
+            note_to_payer?: string;
             commit?: boolean,
             button?: IPayPalButtonStyle,
             funding?: IPayPalFunding
@@ -123,11 +124,55 @@ export interface IPaypalClient {
 export interface IPayPalTransaction {
     amount: IPayPalAmount;
     custom?: string;
+    payment_options?: IPayPalTransactionPaymentOptions;
+    soft_descriptor?: string;
+    item_list?: IPayPalTransactionItemList;
+}
+
+export interface IPayPalTransactionItemList {
+    items?: IPayPalTransactionItem[];
+    shipping_address?: IPayPalTransactionShippingAddress;
+}
+
+export interface IPayPalTransactionItem {
+    name: string;
+    currency: string;
+    price: number;
+    quantity: number;
+
+    description?: string;
+    tax?: number;
+    sku?: string;
 }
 
 export interface IPayPalAmount {
     total: number;
     currency: string;
+    details?: IPayPalAmountDetails;
+}
+
+export interface IPayPalTransactionShippingAddress {
+    recipient_name: string;
+    line1: string;
+    line2?: string;
+    city: string;
+    country_code: string;
+    postal_code: string;
+    phone: string;
+    state: string;
+}
+
+export interface IPayPalAmountDetails {
+    subtotal: number;
+    tax: number;
+    shipping: number;
+    handling_fee: number;
+    shipping_discount: number;
+    insurance: number;
+}
+
+export interface IPayPalTransactionPaymentOptions {
+    allowed_payment_method?: string;
 }
 
 export interface IPayPalButtonStyle {
