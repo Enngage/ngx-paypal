@@ -77,6 +77,10 @@ export class AppComponent implements AfterViewInit, OnInit {
           validate: (actions) => {
             console.log(actions);
           },
+          experience: {
+            noShipping: true,
+            brandName: 'Angular PayPal'
+          },
           transactions: [
             {
               amount: {
@@ -174,6 +178,10 @@ export class AppComponent implements AfterViewInit, OnInit {
         },
         validate: (actions) => {
           console.log(actions);
+        },
+        experience: {
+          noShipping: true,
+          brandName: 'Angular PayPal'
         },
         transactions: [
           {

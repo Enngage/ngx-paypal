@@ -32,6 +32,11 @@ export class PayPalConfig {
     public transactions?: IPayPalTransaction[];
 
     /**
+     * Payment Experience configurations
+     */
+    public experience?: IPayPalExperience;
+
+    /**
      * Called for client side integration when payment is executed
      */
     public onPaymentComplete?: (data: IPayPalPaymentCompleteData, actions: any) => void;
@@ -86,6 +91,7 @@ export class PayPalConfig {
             onPaymentComplete?: (data: IPayPalPaymentCompleteData, actions: any) => void,
             transactions?: IPayPalTransaction[],
             note_to_payer?: string;
+            experience?: IPayPalExperience,
             commit?: boolean,
             button?: IPayPalButtonStyle,
             funding?: IPayPalFunding
@@ -123,6 +129,7 @@ export interface IPaypalClient {
 
 export interface IPayPalTransaction {
     amount: IPayPalAmount;
+    description?: string;
     custom?: string;
     payment_options?: IPayPalTransactionPaymentOptions;
     soft_descriptor?: string;
@@ -173,6 +180,17 @@ export interface IPayPalAmountDetails {
 
 export interface IPayPalTransactionPaymentOptions {
     allowed_payment_method?: string;
+}
+
+export interface IPayPalExperience {
+    /** Indicates whether PayPal displays shipping address fields on the experience pages */
+    noShipping?: boolean;
+    /** A label that overrides the business name in the PayPal account on the PayPal pages. Max length: 127 characters. */
+    brandName?: string;
+    /** URL to the logo image (gif, jpg, or png). The image's maximum width is 190 pixels and maximum height is 60 pixels. */
+    logoImage?: string;
+    /** Locale in which to display PayPal page */
+    localeCode?: string;
 }
 
 export interface IPayPalButtonStyle {

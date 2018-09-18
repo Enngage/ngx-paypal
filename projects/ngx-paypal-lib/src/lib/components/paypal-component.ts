@@ -247,9 +247,20 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit, OnDestroy {
                         throw Error(`You need to provide at least 1 transaction for client side integration`);
                     }
 
+                    const experienceConfig = this.config.experience;
                     return actions.payment.create({
                         payment: {
                             transactions: this.config.transactions
+                        },
+                        experience: {
+                            input_fields: {
+                                no_shipping: (experienceConfig && experienceConfig.noShipping) ? 1 : 0
+                            },
+                            presentation: {
+                                brand_name: (experienceConfig && experienceConfig.brandName) ? experienceConfig.brandName : null,
+                                logo_image: (experienceConfig && experienceConfig.logoImage) ? experienceConfig.logoImage : null,
+                                locale_code: (experienceConfig && experienceConfig.localeCode) ? experienceConfig.localeCode : null
+                            }
                         }
                     });
                 }
