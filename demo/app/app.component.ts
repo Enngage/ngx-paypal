@@ -166,6 +166,7 @@ export class AppComponent implements AfterViewInit, OnInit {
         },
         onPaymentComplete: (data, actions) => {
           console.log('OnPaymentComplete');
+          console.log(data);
         },
         onCancel: (data, actions) => {
           console.log('OnCancel');
