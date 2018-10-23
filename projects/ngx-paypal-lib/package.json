@@ -17,7 +17,7 @@
     "build:lib": "ng build ngx-paypal-lib",
     "publish:lib": "npm run build:lib && npm publish dist",
     "prepublishOnly": "npm run preventPublish",
-    "preventPublish": "npm run prevent-publish"
+    "preventPublish": "node prevent-publish"
   },
   "peerDependencies": {
     "@angular/common": "^7.0.0",
