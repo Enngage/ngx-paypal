@@ -8,6 +8,11 @@ PayPal integration for Angular 6+. For live example and documentation visit [htt
 
 This library is based on [PayPal's checkout integration](https://developer.paypal.com/docs/checkout/integrate/#1-get-the-code). Please refer to this documentation for description of API options and their meaning.
 
+## Supported versions
+
+1. For Angular 6 use ngx-captcha on version `<= 3.x.y`
+2. For Angular 7 use ngx-captcha on version `>= 4.0.0`
+
 ## Installation
 
 ```javascript
