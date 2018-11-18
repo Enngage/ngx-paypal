@@ -132,6 +132,7 @@ export interface IPayPalTransaction {
     description?: string;
     custom?: string;
     payment_options?: IPayPalTransactionPaymentOptions;
+    invoice_number?: string;
     soft_descriptor?: string;
     item_list?: IPayPalTransactionItemList;
 }
