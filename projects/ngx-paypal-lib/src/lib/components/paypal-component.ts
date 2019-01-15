@@ -249,9 +249,9 @@ export class NgxPaypalComponent implements OnChanges, AfterViewInit, OnDestroy {
 
                     const experienceConfig = this.config.experience;
                     return actions.payment.create({
-                        // Allow user to specifify intent, else use default 'sale'.
-                        intent: this.config.intent ? this.config.intent : 'sale',
                         payment: {
+                            // Allow user to specifify intent, else use default 'sale'.
+                            intent: this.config.intent ? this.config.intent : 'sale',
                             transactions: this.config.transactions
                         },
                         experience: {
