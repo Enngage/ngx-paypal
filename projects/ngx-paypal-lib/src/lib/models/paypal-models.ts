@@ -12,6 +12,11 @@ export class PayPalConfig {
     public commit = true;
 
     /**
+     * Set the intent of the payment.
+     */
+    public intent = 'sale';
+
+    /**
      * Called to create new payment for server side integration
      */
     public payment?: () => Observable<string>;
@@ -86,6 +91,7 @@ export class PayPalConfig {
             validate?: (actions: any) => void;
             onCancel?: (data: IPayPalCancelPayment, actions: any) => void,
             payment?: () => Observable<string>,
+            intent?: string,
             onAuthorize?: (data: IPayPalPaymentCompleteData, actions: any) => Observable<void>,
             client?: IPaypalClient,
             onPaymentComplete?: (data: IPayPalPaymentCompleteData, actions: any) => void,
