@@ -97,6 +97,7 @@ Unit testing in Angular is possible, but a bit clunky because this component tri
 
 A simple fix for this is wait certain amount of time so that everything has a chance to initialize. See example below:
 
+```typescript
 beforeEach(() => {
         fixture = TestBed.createComponent(YourComponent);
         component = fixture.componentInstance;
@@ -104,6 +105,7 @@ beforeEach(() => {
             fixture.detectChanges();
         }, 2000);
 });
+```
 
 ### Publishing lib
 
