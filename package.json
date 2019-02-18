@@ -5,7 +5,7 @@
     "ng": "ng",
     "build:demo": "ng build",
     "serve:demo": "ng serve",
-    "build-demo-gh-pages": "ng build -- --prod"
+    "build-demo-gh-pages": "ng build --prod"
   },
   "private": true,
   "dependencies": {

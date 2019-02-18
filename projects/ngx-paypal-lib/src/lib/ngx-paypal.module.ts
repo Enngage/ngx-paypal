@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { NgxPaypalComponent } from './components/paypal-component';
+import { ScriptService } from './services';
 
 @NgModule({
   imports: [
@@ -10,6 +11,9 @@ import { NgxPaypalComponent } from './components/paypal-component';
   ],
   exports: [
     NgxPaypalComponent,
+  ],
+  providers: [
+    ScriptService
   ]
 })
 export class NgxPayPalModule {

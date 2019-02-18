@@ -4,9 +4,11 @@
 
 ## Angular PayPal
 
-PayPal integration for Angular 6+. For live example and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
+PayPal integration for Angular. For live example and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
 
-This library is based on [https://developer.paypal.com/docs/checkout/integrate/#1-get-the-code](PayPal's checkout integration). Please refer to this documentation for description of API options and their meaning.
+ This Angular library is based on PayPal's (Javascript SDK)[https://developer.paypal.com/docs/checkout/#try-the-buttons]. It does not support each and every feature of the JavaScript SDK so feel free to submit issues or PRs.
+
+ I strongly recommend checking out PayPal's docs linked above if you want to learn more about the flow of checkout process and meaning behind certain properties.
 
 ## Installation
 
@@ -43,46 +45,121 @@ Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `confi
 
 
 ```typescript
-  import { Component, OnInit } from '@angular/core';
-  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from 'ngx-paypal';
+import {
+    Component,
+    OnInit
+} from '@angular/core';
+import {
+    PayPalConfig
+} from 'ngx-paypal';
 
-  @Component({
+@Component({
     templateUrl: './your.component.html',
-  })
-  export class MainComponent implements OnInit {
+})
+export class MainComponent implements OnInit {
 
-    public payPalConfig?: PayPalConfig;
+    public payPalConfig ? : PayPalConfig;
 
     ngOnInit(): void {
-      this.initConfig();
+        this.initPaypal();
     }
 
     private initConfig(): void {
-      this.payPalConfig = new PayPalConfig(PayPalIntegrationType.ClientSideREST, PayPalEnvironment.Sandbox, {
-        commit: true,
-        client: {
-          sandbox: 'yourSandboxKey'
-        },
-        button: {
-          label: 'paypal',
-        },
-        onPaymentComplete: (data, actions) => {
-          console.log('OnPaymentComplete');
-        },
-        onCancel: (data, actions) => {
-          console.log('OnCancel');
-        },
-        onError: (err) => {
-          console.log('OnError');
-        },
-        transactions: [{
-          amount: {
-            currency: 'USD',
-            total: 9
-          }
-        }]
-      });
+        this.payPalConfig = new PayPalConfig({
+            currency: 'EUR',
+            clientId: 'sb',
+            createOrder: (data) => < ICreateOrderRequest > {
+                intent: 'CAPTURE',
+                purchase_units: [{
+                    amount: {
+                        currency_code: 'EUR',
+                        value: '9.99',
+                        breakdown: {
+                            item_total: {
+                                currency_code: 'EUR',
+                                value: '9.99'
+                            }
+                        }
+                    },
+                    items: [{
+                        name: 'Enterprise Subscription',
+                        quantity: '1',
+                        category: 'DIGITAL_GOODS',
+                        unit_amount: {
+                            currency_code: 'EUR',
+                            value: '9.99',
+                        },
+                    }]
+                }]
+            },
+            advanced: {
+                updateOrderDetails: {
+                    commit: true
+                }
+            },
+            style: {
+                label: 'paypal',
+                layout: 'vertical'
+            },
+            onApprove: (data, actions) => {
+                console.log('onApprove - transaction was approved, but not authorized', data, actions);
+                actions.order.get().then(details => {
+                    console.log('onApprove - you can get full order details inside onApprove: ', details);
+                });
+
+            },
+            onClientAuthorization: (data) => {
+                console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+                this.showSuccess = true;
+            },
+            onCancel: (data, actions) => {
+                console.log('OnCancel', data, actions);
+                this.showCancel = true;
+
+            },
+            onError: err => {
+                console.log('OnError', err);
+                this.showError = true;
+            },
+            onClick: () => {
+                console.log('onClick');
+                this.resetStatus();
+            },
+        });
     }
-  }
+}
+```
+
+## Unit testing
+
+Unit testing in Angular is possible, but a bit clunky because this component tries to dynamically include paypals's script if its not already loaded. You are not required to include in globally or manually which has a benefit of not loading until you actually use this component. This has a caveat though, since the load callback is executed outside of Angular's zone, performing unit tests might fail due to racing condition where Angular might fail the test before the script has a chance to load and initialize captcha.
+
+A simple fix for this is wait certain amount of time so that everything has a chance to initialize. See example below:
+
+```typescript
+beforeEach(() => {
+        fixture = TestBed.createComponent(YourComponent);
+        component = fixture.componentInstance;
+        setTimeout(function () {
+            fixture.detectChanges();
+        }, 2000);
+});
+```
+
+### Publishing lib
+
+Under `projects\ngx-paypal-lib` run 
+
+```
+npm run publish-lib
+```
+
+### Publishing demo app
+
+Under root, generate demo app with
+
+```
+npm run build-demo-gh-pages
+npx ngh --dir=dist-demo
 ```
 
