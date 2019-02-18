@@ -6,11 +6,14 @@
     "url": "https://github.com/Enngage/ngx-paypal"
   },
   "author": "richard sustek",
-  "description": "Paypal integration for Angular 6, 7 and beyond",
+  "description": "Paypal integration for Angular",
   "keywords": [
     "Paypal",
     "Angular paypal",
-    "Paypal integration angular"
+    "Paypal integration angular",
+    "Ngx paypal",
+    "Paypal SDK",
+    "Paypal javascript"
   ],
   "private": false,
   "scripts": {
