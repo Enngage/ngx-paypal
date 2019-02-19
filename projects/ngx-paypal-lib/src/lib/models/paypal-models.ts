@@ -96,12 +96,18 @@ export interface ILinkDescription {
     method?: LinkMethod;
 }
 
+export interface IQueryParam {
+    name: string;
+    value: string;
+}
+
 export type LinkMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'CONNECT' | 'OPTIONS' | 'PATCH';
 
 export interface IAdvancedConfiguration {
     updateOrderDetails?: {
         commit?: boolean
     };
+    extraQueryParams?: IQueryParam[];
 }
 
 export interface IOnApproveCallbackData {

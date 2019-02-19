@@ -8,6 +8,7 @@ import {
     IOnApproveCallbackActions,
     IOnApproveCallbackData,
     PayPalConfig,
+    IQueryParam,
 } from '../models/paypal-models';
 import { ScriptService } from '../services';
 
@@ -79,6 +80,11 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
                 name: 'commit',
                 value: config.advanced.updateOrderDetails.commit ? 'true' : 'false'
             });
+        }
+
+        // add extra query params
+        if (config.advanced && config.advanced.extraQueryParams) {
+            params.push(...config.advanced.extraQueryParams);
         }
 
         return `https://www.paypal.com/sdk/js${this.getQueryString(params)}`;
@@ -161,8 +167,4 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
     }
 }
 
-interface IQueryParam {
-    name: string;
-    value: string;
-}
 
