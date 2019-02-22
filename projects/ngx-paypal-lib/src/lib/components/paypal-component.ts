@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnDestroy,
+    SimpleChanges,
+    ViewChild,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 
 import {
@@ -7,8 +17,8 @@ import {
     ICreateOrderCallbackActions,
     IOnApproveCallbackActions,
     IOnApproveCallbackData,
-    PayPalConfig,
     IQueryParam,
+    PayPalConfig,
 } from '../models/paypal-models';
 import { ScriptService } from '../services';
 
@@ -16,10 +26,10 @@ import { ScriptService } from '../services';
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ngx-paypal',
     template: `
-    <div #paypalButtonContainer [id]="paypalButtonContainerId"></div>
+    <div #payPalButtonContainer [id]="payPalButtonContainerId"></div>
     `
 })
-export class NgxPaypalComponent implements OnChanges, OnDestroy {
+export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     /**
      * Configuration for paypal.
@@ -34,30 +44,64 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
     /**
      * Id of the element where PayPal button will be rendered
      */
-    public paypalButtonContainerId?: string;
+    public payPalButtonContainerId?: string;
 
     private readonly ngUnsubscribe: Subject<void> = new Subject<void>();
 
+    private payPalButtonContainerElem?: ElementRef;
+    @ViewChild('payPalButtonContainer') set payPalButtonContainer(content: ElementRef) {
+        this.payPalButtonContainerElem = content;
+    }
+
+    /**
+     * Flag that indicates if paypal should be initialized (required for handling script load events and availability of DOM element)
+     */
+    private initializePayPal: boolean = true;
+
+    /**
+     * Reference to PayPal global API
+     */
+    private payPal: any;
+
     constructor(
-        private scriptService: ScriptService
+        private scriptService: ScriptService,
     ) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (!this.paypalButtonContainerId) {
-            this.paypalButtonContainerId = this.generateElementId();
+        if (!this.payPalButtonContainerId) {
+            this.payPalButtonContainerId = this.generateElementId();
         }
 
         // init when config once its available
         const config = this.config;
         if (config) {
-            this.initPayPalScript(config, (paypal) => this.initPayPal(config, paypal));
+            this.initPayPalScript(config, (payPal) => {
+                // store reference to paypal global script
+                this.payPal = payPal;
+                this.doPayPalCheck();
+            });
         }
     }
 
     ngOnDestroy(): void {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
+    }
+
+    ngAfterViewInit(): void {
+        this.doPayPalCheck();
+    }
+
+    private doPayPalCheck(): void {
+        if (this.initializePayPal && this.config && this.payPal && this.payPalButtonContainerElem) {
+            // make sure that id is also set
+            if (this.payPalButtonContainerElem.nativeElement.id) {
+                this.initializePayPal = false;
+                this.initPayPal(this.config, this.payPal);
+            }
+
+        }
     }
 
     private getPayPalSdkUrl(config: PayPalConfig): string {
@@ -163,7 +207,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy {
                     config.onClick();
                 }
             },
-        }).render(`#${this.paypalButtonContainerId}`);
+        }).render(`#${this.payPalButtonContainerId}`);
     }
 }
 
