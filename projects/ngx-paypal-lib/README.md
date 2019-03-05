@@ -146,6 +146,9 @@ beforeEach(() => {
 });
 ```
 
+## Breaking v5 release
+Versions > 5 represent completely rewrite of the library and switch to latest PayPal JavaScript SDK. Its highly recommended to use this version. If you still wish to use previous version, check [v4 branch](https://github.com/Enngage/ngx-paypal/tree/v4) for previous documentation.
+
 ### Publishing lib
 
 Under `projects\ngx-paypal-lib` run 
