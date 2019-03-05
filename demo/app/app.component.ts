@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { of } from 'rxjs';
 
-import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from '../../projects/ngx-paypal-lib/src/public_api';
+import { ICreateOrderRequest, PayPalConfig } from '../../projects/ngx-paypal-lib/src/public_api';
 
 declare var hljs: any;
 
@@ -13,6 +12,9 @@ declare var hljs: any;
 export class AppComponent implements AfterViewInit, OnInit {
   public payPalConfig?: PayPalConfig;
 
+  public showSuccess: boolean = false;
+  public showCancel: boolean = false;
+  public showError: boolean = false;
   public readonly npmCode = `npm install ngx-paypal --save`;
 
   public readonly moduleInstallation = `
@@ -26,17 +28,77 @@ export class AppComponent implements AfterViewInit, OnInit {
   })
   `;
 
+  public readonly initPaypalCode = `this.payPalConfig = new PayPalConfig({
+      currency: 'EUR',
+      clientId: 'sb',
+      createOrder: (data) => <ICreateOrderRequest>{
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            amount: {
+              currency_code: 'EUR',
+              value: '9.99',
+              breakdown: {
+                item_total: {
+                  currency_code: 'EUR',
+                  value: '9.99'
+                }
+              }
+            },
+            items: [
+              {
+                name: 'Enterprise Subscription',
+                quantity: '1',
+                category: 'DIGITAL_GOODS',
+                unit_amount: {
+                  currency_code: 'EUR',
+                  value: '9.99',
+                },
+              }
+            ]
+          }
+        ]
+      },
+      advanced: {
+        updateOrderDetails: {
+          commit: true
+        }
+      },
+      style: {
+        label: 'paypal',
+        layout: 'vertical'
+      },
+      onApprove: (data, actions) => {
+        console.log('onApprove - transaction was approved, but not authorized', data, actions);
+        actions.order.get().then(details => {
+          console.log('onApprove - you can get full order details inside onApprove: ', details);
+        });
+      },
+      onClientAuthorization: (data) => {
+        console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+        this.showSuccess = true;
+      },
+      onCancel: (data, actions) => {
+        console.log('OnCancel', data, actions);
+      },
+      onError: err => {
+        console.log('OnError', err);
+      },
+      onClick: () => {
+        console.log('onClick');
+      },
+    });`;
+
   public readonly htmlCode = `<ngx-paypal [config]="payPalConfig"></ngx-paypal>`;
 
   public readonly usageCodeTs = `
   import { Component, OnInit } from '@angular/core';
-  import { of } from 'rxjs';
-  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from 'ngx-paypal';
+  import { PayPalConfig } from 'ngx-paypal';
 
   @Component({
-    templateUrl: './main.component.html',
+    templateUrl: './your.component.html',
   })
-  export class MainComponent implements OnInit {
+  export class YourComponent implements OnInit {
 
     public payPalConfig?: PayPalConfig;
 
@@ -45,93 +107,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
 
     private initConfig(): void {
-      this.payPalConfig = new PayPalConfig(
-        PayPalIntegrationType.ClientSideREST,
-        PayPalEnvironment.Sandbox,
-        {
-          commit: true,
-          client: {
-            sandbox:
-              'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R'
-          },
-          button: {
-            label: 'paypal',
-            layout: 'vertical'
-          },
-          onAuthorize: (data, actions) => {
-            console.log('Authorize');
-            return of(undefined);
-          },
-          onPaymentComplete: (data, actions) => {
-            console.log('OnPaymentComplete');
-          },
-          onCancel: (data, actions) => {
-            console.log('OnCancel');
-          },
-          onError: err => {
-            console.log('OnError');
-          },
-          onClick: () => {
-            console.log('onClick');
-          },
-          validate: (actions) => {
-            console.log(actions);
-          },
-          experience: {
-            noShipping: true,
-            brandName: 'Angular PayPal'
-          },
-          transactions: [
-            {
-              amount: {
-                total: 30.11,
-                currency: 'USD',
-                details: {
-                  subtotal: 30.00,
-                  tax: 0.07,
-                  shipping: 0.03,
-                  handling_fee: 1.00,
-                  shipping_discount: -1.00,
-                  insurance: 0.01
-                }
-              },
-              custom: 'Custom value',
-              item_list: {
-                items: [
-                  {
-                    name: 'hat',
-                    description: 'Brown hat.',
-                    quantity: 5,
-                    price: 3,
-                    tax: 0.01,
-                    sku: '1',
-                    currency: 'USD'
-                  },
-                  {
-                    name: 'handbag',
-                    description: 'Black handbag.',
-                    quantity: 1,
-                    price: 15,
-                    tax: 0.02,
-                    sku: 'product34',
-                    currency: 'USD'
-                  }],
-                shipping_address: {
-                  recipient_name: 'Brian Robinson',
-                  line1: '4th Floor',
-                  line2: 'Unit #34',
-                  city: 'San Jose',
-                  country_code: 'US',
-                  postal_code: '95131',
-                  phone: '011862212345678',
-                  state: 'CA'
-                },
-              },
-            }
-          ],
-          note_to_payer: 'Contact us if you have troubles processing payment'
-        }
-      );
+      ${this.initPaypalCode}
     }
   }
   `;
@@ -147,98 +123,77 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   private initConfig(): void {
-    this.payPalConfig = new PayPalConfig(
-      PayPalIntegrationType.ClientSideREST,
-      PayPalEnvironment.Sandbox,
-      {
-        commit: true,
-        client: {
-          sandbox:
-            'AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R'
-        },
-        button: {
-          label: 'paypal',
-          layout: 'vertical'
-        },
-        onAuthorize: (data, actions) => {
-          console.log('Authorize');
-          return of(undefined);
-        },
-        onPaymentComplete: (data, actions) => {
-          console.log('OnPaymentComplete');
-          console.log(data);
-        },
-        onCancel: (data, actions) => {
-          console.log('OnCancel');
-        },
-        onError: err => {
-          console.log('OnError');
-        },
-        onClick: () => {
-          console.log('onClick');
-        },
-        validate: (actions) => {
-          console.log(actions);
-        },
-        experience: {
-          noShipping: true,
-          brandName: 'Angular PayPal'
-        },
-        transactions: [
+    this.payPalConfig = new PayPalConfig({
+      currency: 'EUR',
+      clientId: 'sb',
+      createOrder: (data) => <ICreateOrderRequest>{
+        intent: 'CAPTURE',
+        purchase_units: [
           {
             amount: {
-              total: 30.11,
-              currency: 'USD',
-              details: {
-                subtotal: 30.00,
-                tax: 0.07,
-                shipping: 0.03,
-                handling_fee: 1.00,
-                shipping_discount: -1.00,
-                insurance: 0.01
+              currency_code: 'EUR',
+              value: '9.99',
+              breakdown: {
+                item_total: {
+                  currency_code: 'EUR',
+                  value: '9.99'
+                }
               }
             },
-            custom: 'Custom value',
-            item_list: {
-              items: [
-                {
-                  name: 'hat',
-                  description: 'Brown hat.',
-                  quantity: 5,
-                  price: 3,
-                  tax: 0.01,
-                  sku: '1',
-                  currency: 'USD'
+            items: [
+              {
+                name: 'Enterprise Subscription',
+                quantity: '1',
+                category: 'DIGITAL_GOODS',
+                unit_amount: {
+                  currency_code: 'EUR',
+                  value: '9.99',
                 },
-                {
-                  name: 'handbag',
-                  description: 'Black handbag.',
-                  quantity: 1,
-                  price: 15,
-                  tax: 0.02,
-                  sku: 'product34',
-                  currency: 'USD'
-                }],
-              shipping_address: {
-                recipient_name: 'Brian Robinson',
-                line1: '4th Floor',
-                line2: 'Unit #34',
-                city: 'San Jose',
-                country_code: 'US',
-                postal_code: '95131',
-                phone: '011862212345678',
-                state: 'CA'
-              },
-            },
+              }
+            ]
           }
-        ],
-        payment: () => {
-          // create your payment on server side
-          return of(undefined);
-        },
-        note_to_payer: 'Contact us if you have troubles processing payment'
-      }
-    );
+        ]
+      },
+      advanced: {
+        updateOrderDetails: {
+          commit: true
+        }
+      },
+      style: {
+        label: 'paypal',
+        layout: 'vertical'
+      },
+      onApprove: (data, actions) => {
+        console.log('onApprove - transaction was approved, but not authorized', data, actions);
+        actions.order.get().then(details => {
+          console.log('onApprove - you can get full order details inside onApprove: ', details);
+        });
+
+      },
+      onClientAuthorization: (data) => {
+        console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+        this.showSuccess = true;
+      },
+      onCancel: (data, actions) => {
+        console.log('OnCancel', data, actions);
+        this.showCancel = true;
+
+      },
+      onError: err => {
+        console.log('OnError', err);
+        this.showError = true;
+      },
+      onClick: () => {
+        console.log('onClick');
+        this.resetStatus();
+      },
+    });
+  }
+
+  private resetStatus(): void {
+    this.showError = false;
+    this.showSuccess = false;
+    this.showCancel = false;
   }
 
   private prettify(): void {

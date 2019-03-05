@@ -1,5 +1,5 @@
 /** Public API */
 export * from './lib/ngx-paypal.module';
-export * from './lib/models';
-export * from './lib/components';
+export * from './lib/models/paypal-models';
+export * from './lib/components/paypal.component';
 

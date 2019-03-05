@@ -4,14 +4,11 @@
 
 ## Angular PayPal
 
-PayPal integration for Angular 6+. For live example and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
+PayPal integration for Angular. For live example and documentation visit [https://enngage.github.io/ngx-paypal/](https://enngage.github.io/ngx-paypal/)
 
-This library is based on [PayPal's checkout integration](https://developer.paypal.com/docs/checkout/integrate/#1-get-the-code). Please refer to this documentation for description of API options and their meaning.
+ This Angular library is based on PayPal's [Javascript SDK](https://developer.paypal.com/docs/checkout/#try-the-buttons). It does not support each and every feature of the JavaScript SDK so feel free to submit issues or PRs.
 
-## Supported versions
-
-1. For Angular 6 use ngx-captcha on version `<= 3.x.y`
-2. For Angular 7 use ngx-captcha on version `>= 4.0.0`
+ I strongly recommend checking out PayPal's docs linked above if you want to learn more about the flow of checkout process and meaning behind certain properties. There are ton of properties you can set within the `createOrder` method and good IDE will show you these properties so use that, I don't find it particulary useful to list all properties and their description here - PayPal docs is your friend.
 
 ## Installation
 
@@ -48,47 +45,89 @@ Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `confi
 
 
 ```typescript
-  import { Component, OnInit } from '@angular/core';
-  import { PayPalConfig, PayPalEnvironment, PayPalIntegrationType } from 'ngx-paypal';
+import {
+    Component,
+    OnInit
+} from '@angular/core';
+import {
+    PayPalConfig
+} from 'ngx-paypal';
 
-  @Component({
+@Component({
     templateUrl: './your.component.html',
-  })
-  export class MainComponent implements OnInit {
+})
+export class MainComponent implements OnInit {
 
-    public payPalConfig?: PayPalConfig;
+    public payPalConfig ? : PayPalConfig;
 
     ngOnInit(): void {
-      this.initConfig();
+        this.initPaypal();
     }
 
     private initConfig(): void {
-      this.payPalConfig = new PayPalConfig(PayPalIntegrationType.ClientSideREST, PayPalEnvironment.Sandbox, {
-        commit: true,
-        client: {
-          sandbox: 'yourSandboxClientId',
-        },
-        button: {
-          label: 'paypal',
-        },
-        onPaymentComplete: (data, actions) => {
-          console.log('OnPaymentComplete');
-        },
-        onCancel: (data, actions) => {
-          console.log('OnCancel');
-        },
-        onError: (err) => {
-          console.log('OnError');
-        },
-        transactions: [{
-          amount: {
-            currency: 'USD',
-            total: 9
-          }
-        }]
-      });
+        this.payPalConfig = new PayPalConfig({
+            currency: 'EUR',
+            clientId: 'sb',
+            createOrder: (data) => < ICreateOrderRequest > {
+                intent: 'CAPTURE',
+                purchase_units: [{
+                    amount: {
+                        currency_code: 'EUR',
+                        value: '9.99',
+                        breakdown: {
+                            item_total: {
+                                currency_code: 'EUR',
+                                value: '9.99'
+                            }
+                        }
+                    },
+                    items: [{
+                        name: 'Enterprise Subscription',
+                        quantity: '1',
+                        category: 'DIGITAL_GOODS',
+                        unit_amount: {
+                            currency_code: 'EUR',
+                            value: '9.99',
+                        },
+                    }]
+                }]
+            },
+            advanced: {
+                updateOrderDetails: {
+                    commit: true
+                }
+            },
+            style: {
+                label: 'paypal',
+                layout: 'vertical'
+            },
+            onApprove: (data, actions) => {
+                console.log('onApprove - transaction was approved, but not authorized', data, actions);
+                actions.order.get().then(details => {
+                    console.log('onApprove - you can get full order details inside onApprove: ', details);
+                });
+
+            },
+            onClientAuthorization: (data) => {
+                console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+                this.showSuccess = true;
+            },
+            onCancel: (data, actions) => {
+                console.log('OnCancel', data, actions);
+                this.showCancel = true;
+
+            },
+            onError: err => {
+                console.log('OnError', err);
+                this.showError = true;
+            },
+            onClick: () => {
+                console.log('onClick');
+                this.resetStatus();
+            },
+        });
     }
-  }
+}
 ```
 
 ## Unit testing

@@ -1,218 +1,301 @@
-import { Observable } from 'rxjs';
-
-import { PayPalFunding } from './paypal-funding';
-import { PayPalEnvironment } from './paypal-environment';
-import { PayPalIntegrationType } from './paypal-integration';
 
 export class PayPalConfig {
 
     /**
-     * Show 'Pay Now' button config
+     * Currency - Defaults to USD if not provided
      */
-    public commit = true;
+    public currency?: string;
 
     /**
-     * Set the intent of the payment.
-     */
-    public intent = 'sale';
+    * Order to be created
+    */
+    public createOrder!: (data: any) => ICreateOrderRequest;
 
     /**
-     * Called to create new payment for server side integration
+     * Advanced configuration
      */
-    public payment?: () => Observable<string>;
+    public advanced?: IAdvancedConfiguration;
 
     /**
-     * Called to execute payment for server side integration
+     * Client id
      */
-    public onAuthorize?: (data: IPayPalPaymentCompleteData, actions: any) => Observable<void>;
+    public clientId!: string;
 
     /**
-     * Client tokens for client side integration
+     * Called when 'onApprove' event occurs
      */
-    public client?: IPaypalClient;
+    public onApprove!: (data: IOnApproveCallbackData, actions: any) => void;
 
     /**
-     * Array of transaction, required for client side integration
-     */
-    public transactions?: IPayPalTransaction[];
+    * Called when authorization on client succeeds
+    */
+    public onClientAuthorization?: (authorization: IClientAuthorizeCallbackData) => void;
 
     /**
-     * Payment Experience configurations
+     * Implement for authorizing on server side
      */
-    public experience?: IPayPalExperience;
+    public authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void;
 
     /**
-     * Called for client side integration when payment is executed
+     * Button style configuration
      */
-    public onPaymentComplete?: (data: IPayPalPaymentCompleteData, actions: any) => void;
+    public style?: IPayPalButtonStyle;
 
     /**
-     * Button configuration
-     */
-    public button?: IPayPalButtonStyle;
-
-    /**
-     * Paypal funding configuration
-     */
-    public funding?: IPayPalFunding;
-
-    /**
-     * Called when PayPal experiences an error
+     * Error handler
      */
     public onError?: (err: any) => void;
 
     /**
-     * This handler will be called for every click on the PayPal button
+     * Click handler
      */
     public onClick?: () => void;
 
     /**
-     * Called when user cancels payment
+     * Cancel handler
      */
-    public onCancel?: (data: IPayPalCancelPayment, actions: any) => void;
-
-    /**
-     * Can be used to validation as can be seen here: https://developer.paypal.com/demo/checkout/#/pattern/validation
-     */
-    public validate?: (actions: any) => void;
+    onCancel?: (data: ICancelCallbackData, actions: any) => void;
 
     constructor(
-        /**
-         * Type of the integration
-         */
-        public integrationType: PayPalIntegrationType,
-        /**
-         * Environment
-         */
-        public environment: PayPalEnvironment,
         config: {
+            clientId: string,
+            onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => void,
+            createOrder: (data: any) => ICreateOrderRequest,
+
+            onClientAuthorization?: (authorization: IClientAuthorizeCallbackData) => void,
+            advanced?: IAdvancedConfiguration,
+            authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void,
+            currency?: string;
             onError?: (err: any) => void,
             onClick?: () => void,
-            validate?: (actions: any) => void;
-            onCancel?: (data: IPayPalCancelPayment, actions: any) => void,
-            payment?: () => Observable<string>,
-            intent?: string,
-            onAuthorize?: (data: IPayPalPaymentCompleteData, actions: any) => Observable<void>,
-            client?: IPaypalClient,
-            onPaymentComplete?: (data: IPayPalPaymentCompleteData, actions: any) => void,
-            transactions?: IPayPalTransaction[],
-            note_to_payer?: string;
-            experience?: IPayPalExperience,
-            commit?: boolean,
-            button?: IPayPalButtonStyle,
-            funding?: IPayPalFunding
+            onCancel?: (data: ICancelCallbackData, actions: any) => void,
+            style?: IPayPalButtonStyle,
         }) {
         Object.assign(this, config);
     }
 }
 
-export interface IPayPalPaymentCompleteData {
-    intent: string;
+export interface IClientAuthorizeCallbackData extends IOrderDetails {
+    links: ILinkDescription[];
+}
+
+export interface IOrderDetails {
+    create_time: string;
+    update_time: string;
+    id: string;
+    intent: OrderIntent;
+    payer: IPayer;
+    status: OrderStatus;
+    links: ILinkDescription[];
+}
+
+export interface ILinkDescription {
+    href: string;
+    rel: String;
+    method?: LinkMethod;
+}
+
+export interface IQueryParam {
+    name: string;
+    value: string;
+}
+
+export type LinkMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'CONNECT' | 'OPTIONS' | 'PATCH';
+
+export interface IAdvancedConfiguration {
+    updateOrderDetails?: {
+        commit?: boolean
+    };
+    extraQueryParams?: IQueryParam[];
+}
+
+export interface IOnApproveCallbackData {
     orderID: string;
     payerID: string;
-    paymentID: string;
-    paymentToken: string;
-    returnUrl: string;
 }
 
-export interface IPayPalCancelPayment {
-    data: IPayPalCancelPaymentData;
-    actions: any;
+export interface ICreateOrderCallbackActions {
+    order: {
+        create: (order: ICreateOrderRequest) => Promise<any>;
+    };
 }
 
-export interface IPayPalCancelPaymentData {
-    billingID: string;
-    cancelUrl: string;
-    intent: string;
-    paymentID: string;
-    paymentToken: string;
+export interface ICancelCallbackData {
+    orderID: string;
 }
 
-export interface IPaypalClient {
-    sandbox?: string;
-    production?: string;
-}
-
-export interface IPayPalTransaction {
-    amount: IPayPalAmount;
-    description?: string;
-    custom?: string;
-    payment_options?: IPayPalTransactionPaymentOptions;
-    invoice_number?: string;
-    soft_descriptor?: string;
-    item_list?: IPayPalTransactionItemList;
-}
-
-export interface IPayPalTransactionItemList {
-    items?: IPayPalTransactionItem[];
-    shipping_address?: IPayPalTransactionShippingAddress;
-}
-
-export interface IPayPalTransactionItem {
-    name: string;
-    currency: string;
-    price: number;
-    quantity: number;
-
-    description?: string;
-    tax?: number;
-    sku?: string;
-}
-
-export interface IPayPalAmount {
-    total: number;
-    currency: string;
-    details?: IPayPalAmountDetails;
-}
-
-export interface IPayPalTransactionShippingAddress {
-    recipient_name: string;
-    line1: string;
-    line2?: string;
-    city: string;
-    country_code: string;
-    postal_code: string;
-    phone: string;
-    state: string;
-}
-
-export interface IPayPalAmountDetails {
-    subtotal: number;
-    tax: number;
-    shipping: number;
-    handling_fee: number;
-    shipping_discount: number;
-    insurance: number;
-}
-
-export interface IPayPalTransactionPaymentOptions {
-    allowed_payment_method?: string;
-}
-
-export interface IPayPalExperience {
-    /** Indicates whether PayPal displays shipping address fields on the experience pages */
-    noShipping?: boolean;
-    /** A label that overrides the business name in the PayPal account on the PayPal pages. Max length: 127 characters. */
-    brandName?: string;
-    /** URL to the logo image (gif, jpg, or png). The image's maximum width is 190 pixels and maximum height is 60 pixels. */
-    logoImage?: string;
-    /** Locale in which to display PayPal page */
-    localeCode?: string;
+export interface IOnApproveCallbackActions {
+    redirect: () => void;
+    restart: () => void;
+    order: {
+        authorize: () => Promise<any>;
+        capture: () => Promise<any>;
+        get: () => Promise<IOrderDetails>;
+        patch: () => Promise<any>;
+    };
 }
 
 export interface IPayPalButtonStyle {
-    label?: 'checkout' | 'pay' | 'buynow' | 'paypal';
+    label?: 'paypal' | 'checkout' | 'pay' | 'installment';
     size?: 'small' | 'medium' | 'large' | 'responsive';
     shape?: 'pill' | 'rect';
-    color?: 'gold' | 'blue' | 'silver' | 'black';
+    color?: 'gold' | 'blue' | 'silver';
     layout?: 'horizontal' | 'vertical';
-    tagline?: false;
-    fundingicons?: boolean;
-    branding?: boolean;
+    tagline?: boolean;
 }
 
-export interface IPayPalFunding {
-    allowed: PayPalFunding[];
-    disallowed: PayPalFunding[];
+export interface ICreateOrderRequest {
+    intent: OrderIntent;
+    purchase_units: IPurchaseUnit[];
+
+    payer?: IPayer;
+    application_context?: IApplicationContext;
+
 }
+export interface IPayer {
+    name?: IPartyName;
+    email_address?: string;
+    payer_id?: string;
+    birth_date?: string;
+    tax_info?: ITaxInfo;
+    address?: IAddressPortable;
+}
+
+export interface IApplicationContext {
+    brand_name?: string;
+    locale?: string;
+    landing_page?: PaypalLandingPage;
+    shipping_preference?: ShippingPreference;
+    user_action?: PayPalUserAction;
+    payment_method?: IPaymentMethod;
+    return_url?: string;
+    cancel_url?: string;
+}
+
+export interface IPaymentMethod {
+    payer_selected?: PayerSelected;
+    payee_preferred?: PayeePreferred;
+}
+
+export type PayeePreferred = 'UNRESTRICTED' | 'IMMEDIATE_PAYMENT_REQUIRED';
+
+export type PayerSelected = 'PAYPAL_CREDIT' | 'PAYPAL';
+
+export type PayPalUserAction = 'CONTINUE' | 'PAY_NOW';
+
+export type ShippingPreference = 'GET_FROM_FILE' | 'NO_SHIPPING' | 'SET_PROVIDED_ADDRESS';
+
+export type PaypalLandingPage = 'LOGIN' | 'BILLING';
+
+export type OrderIntent = 'CAPTURE' | 'AUTHORIZE';
+
+export type DisbursementMode = 'INSTANT' | 'DELAYED';
+
+export type ItemCategory = 'DIGITAL_GOODS' | 'PHYSICAL_GOODS';
+
+export type PhoneType = 'FAX' | 'HOME' | 'MOBILE' | 'OTHER' | 'PAGER';
+
+export type TaxIdType = 'BR_CPF' | 'BR_CNPJ';
+
+export interface IPhone {
+    phone_type?: PhoneType;
+    phone_number?: IPhoneNumber;
+}
+
+export interface ITaxInfo {
+    tax_id: string;
+    tax_id_type: TaxIdType;
+}
+
+export interface IPhoneNumber {
+    national_number: string;
+}
+
+export interface IPurchaseUnit {
+    amount: IUnitAmount;
+
+    reference_id?: string;
+    payee?: IPayee;
+    payment_instruction?: IPaymentInstructions;
+    description?: string;
+    custom_id?: string;
+    invoice_id?: string;
+    soft_descriptor?: string;
+    items: ITransactionItem[];
+    shipping?: IShipping;
+}
+
+export interface IPayee {
+    email_address?: string;
+    merchant_id?: string;
+}
+
+export interface IPaymentInstructions {
+    platform_fees?: IPlatformFee[];
+    disbursement_mode?: DisbursementMode;
+}
+
+export interface IPlatformFee {
+    amount: IUnitAmount;
+    payee?: IPayee;
+}
+
+export interface ITransactionItem {
+    name: string;
+    unit_amount: IUnitAmount;
+    quantity: string;
+
+    description?: string;
+    sku?: string;
+    category?: ItemCategory;
+    tax?: ITax;
+}
+
+export interface ITax {
+    currency_code: string;
+    value: string;
+}
+
+export interface IUnitAmount {
+    currency_code: string;
+    value: string;
+    breakdown?: IUnitBreakdown;
+}
+
+export interface IUnitBreakdown {
+    item_total?: IUnitAmount;
+    shipping?: IUnitAmount;
+    handling?: IUnitAmount;
+    tax_total?: IUnitAmount;
+    insurance?: IUnitAmount;
+    shipping_discount?: IUnitAmount;
+}
+
+export interface IPartyName {
+    prefix?: string;
+    given_name?: string;
+    surname?: string;
+    middle_name?: string;
+    suffix?: string;
+    alternate_full_name?: string;
+    full_name?: string;
+}
+
+export interface IAddressPortable {
+    country_code: string;
+
+    address_line_1?: string;
+    address_line_2?: string;
+    admin_area_2?: string;
+    admin_area_1?: string;
+    postal_code?: string;
+}
+
+export interface IShipping {
+    name?: IPartyName;
+    address?: IAddressPortable;
+}
+
+export type OrderStatus = 'APPROVED' | 'SAVED' | 'CREATED' | 'VOIDED' | 'COMPLETED';
+
 

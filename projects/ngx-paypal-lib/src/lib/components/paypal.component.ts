@@ -1,0 +1,214 @@
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnDestroy,
+    SimpleChanges,
+    ViewChild,
+} from '@angular/core';
+import { Subject } from 'rxjs';
+
+import {
+    ICancelCallbackData,
+    IClientAuthorizeCallbackData,
+    ICreateOrderCallbackActions,
+    IOnApproveCallbackActions,
+    IOnApproveCallbackData,
+    IQueryParam,
+    PayPalConfig,
+} from '../models/paypal-models';
+import { ScriptService } from '../services/script.service';
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'ngx-paypal',
+    template: `
+    <div #payPalButtonContainer [id]="payPalButtonContainerId"></div>
+    `
+})
+export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
+
+    /**
+     * Configuration for paypal.
+     */
+    @Input() config?: PayPalConfig;
+
+    /**
+    * Name of the global variable where paypal is stored
+    */
+    private readonly paypalWindowName = 'paypal';
+
+    /**
+     * Id of the element where PayPal button will be rendered
+     */
+    public payPalButtonContainerId?: string;
+
+    private readonly ngUnsubscribe: Subject<void> = new Subject<void>();
+
+    private payPalButtonContainerElem?: ElementRef;
+    @ViewChild('payPalButtonContainer') set payPalButtonContainer(content: ElementRef) {
+        this.payPalButtonContainerElem = content;
+    }
+
+    /**
+     * Flag that indicates if paypal should be initialized (required for handling script load events and availability of DOM element)
+     */
+    private initializePayPal: boolean = true;
+
+    /**
+     * Reference to PayPal global API
+     */
+    private payPal: any;
+
+    constructor(
+        private scriptService: ScriptService,
+    ) {
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (!this.payPalButtonContainerId) {
+            this.payPalButtonContainerId = this.generateElementId();
+        }
+
+        // init when config once its available
+        const config = this.config;
+        if (config) {
+            this.initPayPalScript(config, (payPal) => {
+                // store reference to paypal global script
+                this.payPal = payPal;
+                this.doPayPalCheck();
+            });
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    }
+
+    ngAfterViewInit(): void {
+        this.doPayPalCheck();
+    }
+
+    private doPayPalCheck(): void {
+        if (this.initializePayPal && this.config && this.payPal && this.payPalButtonContainerElem) {
+            // make sure that id is also set
+            if (this.payPalButtonContainerElem.nativeElement.id) {
+                this.initializePayPal = false;
+                this.initPayPal(this.config, this.payPal);
+            }
+
+        }
+    }
+
+    private getPayPalSdkUrl(config: PayPalConfig): string {
+        const params: IQueryParam[] = [
+            {
+                name: 'client-id',
+                value: config.clientId
+            }
+        ];
+
+        if (config.currency) {
+            params.push({
+                name: 'currency',
+                value: config.currency
+            });
+        }
+
+        if (config.advanced && config.advanced.updateOrderDetails) {
+            params.push({
+                name: 'commit',
+                value: config.advanced.updateOrderDetails.commit ? 'true' : 'false'
+            });
+        }
+
+        // add extra query params
+        if (config.advanced && config.advanced.extraQueryParams) {
+            params.push(...config.advanced.extraQueryParams);
+        }
+
+        return `https://www.paypal.com/sdk/js${this.getQueryString(params)}`;
+    }
+
+    private initPayPalScript(config: PayPalConfig, initPayPal: (paypal: any) => void): void {
+        this.scriptService.registerScript(this.getPayPalSdkUrl(config), this.paypalWindowName, (paypal) => {
+            initPayPal(paypal);
+        });
+    }
+
+    private getQueryString(queryParams: IQueryParam[]): string {
+        let queryString = '';
+
+        for (let i = 0; i < queryParams.length; i++) {
+            const queryParam = queryParams[i];
+            if (i === 0) {
+                queryString += '?';
+            } else {
+                queryString += '&';
+            }
+
+            queryString += `${queryParam.name}=${queryParam.value}`;
+        }
+
+        return queryString;
+    }
+
+    private generateElementId(): string {
+        return `ngx-captcha-id-${new Date().valueOf()}`;
+    }
+
+    private initPayPal(config: PayPalConfig, paypal: any): void {
+        // https://developer.paypal.com/docs/checkout/integrate/#2-add-the-paypal-script-to-your-web-page
+        paypal.Buttons({
+            style: config.style,
+
+            createOrder: (data: any, actions: ICreateOrderCallbackActions) => {
+                return actions.order.create(config.createOrder(data));
+            },
+
+            onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {
+                if (config.onApprove) {
+                    config.onApprove(data, actions);
+                }
+
+                // capture on server
+                if (config.authorizeOnServer) {
+                    config.authorizeOnServer(data, actions);
+                    return;
+                }
+
+                // capture on client
+                const onClientAuthorization = config.onClientAuthorization;
+                if (onClientAuthorization) {
+                    actions.order.capture().then((details: IClientAuthorizeCallbackData) => {
+                        onClientAuthorization(details);
+                    });
+                    return;
+                }
+            },
+
+            onError: (error: any) => {
+                if (config.onError) {
+                    config.onError(error);
+                }
+            },
+
+            onCancel: (data: ICancelCallbackData, actions: any) => {
+                if (config.onCancel) {
+                    config.onCancel(data, actions);
+                }
+            },
+            onClick: () => {
+                if (config.onClick) {
+                    config.onClick();
+                }
+            },
+        }).render(`#${this.payPalButtonContainerId}`);
+    }
+}
+
+
