@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 
 export class PayPalConfig {
 
@@ -27,15 +26,15 @@ export class PayPalConfig {
      */
     public onApprove!: (data: IOnApproveCallbackData, actions: any) => void;
 
-     /**
-     * Called when authorization on client succeeds
-     */
+    /**
+    * Called when authorization on client succeeds
+    */
     public onClientAuthorization?: (authorization: IClientAuthorizeCallbackData) => void;
 
     /**
      * Implement for authorizing on server side
      */
-    public authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => Observable<any>;
+    public authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void;
 
     /**
      * Button style configuration
@@ -65,7 +64,7 @@ export class PayPalConfig {
 
             onClientAuthorization?: (authorization: IClientAuthorizeCallbackData) => void,
             advanced?: IAdvancedConfiguration,
-            authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => Observable<void>,
+            authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void,
             currency?: string;
             onError?: (err: any) => void,
             onClick?: () => void,
