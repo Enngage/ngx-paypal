@@ -11,6 +11,9 @@ export class ScriptService {
     registerScript(url: string, globalVar: string, onReady: (globalVar: any) => void): void {
         if ((window as any)[globalVar]) {
             // global variable is present = script was already loaded
+            this.zone.run(() => {
+                onReady((window as any)[globalVar]);
+            });
             return;
         }
 
