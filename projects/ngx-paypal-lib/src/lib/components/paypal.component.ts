@@ -10,7 +10,7 @@ import {
     PayPalConfig,
     IQueryParam,
 } from '../models/paypal-models';
-import { ScriptService } from '../services';
+import { ScriptService } from '../services/script.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
