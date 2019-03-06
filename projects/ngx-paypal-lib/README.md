@@ -50,7 +50,8 @@ import {
     OnInit
 } from '@angular/core';
 import {
-    PayPalConfig
+    PayPalConfig,
+    ICreateOrderRequest 
 } from 'ngx-paypal';
 
 @Component({
@@ -68,7 +69,7 @@ export class MainComponent implements OnInit {
         this.payPalConfig = new PayPalConfig({
             currency: 'EUR',
             clientId: 'sb',
-            createOrder: (data) => < ICreateOrderRequest > {
+            createOrder: (data) => <ICreateOrderRequest> {
                 intent: 'CAPTURE',
                 purchase_units: [{
                     amount: {
