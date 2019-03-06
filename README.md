@@ -50,7 +50,8 @@ import {
     OnInit
 } from '@angular/core';
 import {
-    PayPalConfig
+    PayPalConfig,
+    ICreateOrderRequest 
 } from 'ngx-paypal';
 
 @Component({
