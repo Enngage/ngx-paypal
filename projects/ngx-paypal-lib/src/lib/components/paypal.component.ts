@@ -194,8 +194,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
                 // capture on server
                 if (config.authorizeOnServer) {
-                    config.authorizeOnServer(data, actions);
-                    return;
+                    return config.authorizeOnServer(data, actions);
                 }
 
                 // capture on client

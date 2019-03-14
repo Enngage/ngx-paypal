@@ -39,7 +39,7 @@ export interface IPayPalConfig {
     /**
      * Implement for authorizing on server side
      */
-    authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void;
+    authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => Promise<any>;
 
     /**
      * Button style configuration
