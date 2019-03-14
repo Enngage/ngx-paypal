@@ -14,7 +14,7 @@ export interface IPayPalConfig {
     /**
      * Use for creating orders on server. PayPal expects you to return 'orderId' in this method
      */
-    createOrderOnServer?: (data: any) => Promise<number>;
+    createOrderOnServer?: (data: any) => Promise<string>;
 
     /**
      * Advanced configuration
