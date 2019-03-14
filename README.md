@@ -188,6 +188,67 @@ export class YourComponent implements OnInit {
 }
 ```
 
+## Authorizing on server
+
+To authorize on payment on server, provide `authorizeOnServer`. If you do so, client validation is not used and therefore the `onClientAuthorization` will not be called.
+
+```typescript
+import {
+    Component,
+    OnInit
+} from '@angular/core';
+import {
+    IPayPalConfig,
+    ICreateOrderRequest 
+} from 'ngx-paypal';
+
+@Component({
+    templateUrl: './your.component.html',
+})
+export class YourComponent implements OnInit {
+
+    public payPalConfig?: IPayPalConfig;
+
+    ngOnInit(): void {
+        this.initConfig();
+    }
+
+    private initConfig(): void {
+        this.payPalConfig = {
+            clientId: 'sb',
+            // for creating orders (transactions) on server see
+            // https://developer.paypal.com/docs/checkout/reference/server-integration/set-up-transaction/
+            createOrderOnServer: (data) => fetch('/my-server/create-paypal-transaction')
+                .then((res) => res.json())
+                .then((order) => data.orderID),
+            authorizeOnServer: (approveData) => {
+                fetch('/my-server/authorize-paypal-transaction', {
+                    body: JSON.stringify({
+                    orderID: approveData.orderID
+                    })
+                }).then((res) => {
+                    return res.json();
+                }).then((details) => {
+                    alert('Authorization created for ' + details.payer_given_name);
+                });
+            },
+            onCancel: (data, actions) => {
+                console.log('OnCancel', data, actions);
+                this.showCancel = true;
+            },
+            onError: err => {
+                console.log('OnError', err);
+                this.showError = true;
+            },
+            onClick: () => {
+                console.log('onClick');
+                this.resetStatus();
+            },
+        };
+    }
+}
+```
+
 ## Unit testing
 
 Unit testing in Angular is possible, but a bit clunky because this component tries to dynamically include paypals's script if its not already loaded. You are not required to include in globally or manually which has a benefit of not loading until you actually use this component. This has a caveat though, since the load callback is executed outside of Angular's zone, performing unit tests might fail due to racing condition where Angular might fail the test before the script has a chance to load and initialize captcha.

@@ -126,7 +126,6 @@ export class AppComponent implements AfterViewInit, OnInit {
     this.payPalConfig = {
       currency: 'EUR',
       clientId: 'sb',
-
       createOrderOnClient: (data) => <ICreateOrderRequest>{
         intent: 'CAPTURE',
         purchase_units: [

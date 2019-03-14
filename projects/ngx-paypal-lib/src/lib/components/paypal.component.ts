@@ -165,7 +165,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         // https://developer.paypal.com/docs/checkout/integrate/#2-add-the-paypal-script-to-your-web-page
         paypal.Buttons({
             style: config.style,
-
             createOrder: (data: any, actions: ICreateOrderCallbackActions) => {
                 if (config.createOrderOnClient && config.createOrderOnServer) {
                     throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
