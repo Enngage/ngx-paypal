@@ -39,10 +39,7 @@ import { NgxPayPalModule } from 'ngx-paypal';
 <ngx-paypal [config]="payPalConfig"></ngx-paypal>
 ```
 
-## TS code
-
-Create `PayPalConfig` model and pass it to the `ngx-paypal` component via `config` input property.
-
+## Creating orders on client
 
 ```typescript
 import {
@@ -50,23 +47,23 @@ import {
     OnInit
 } from '@angular/core';
 import {
-    PayPalConfig,
+    IPayPalConfig,
     ICreateOrderRequest 
 } from 'ngx-paypal';
 
 @Component({
     templateUrl: './your.component.html',
 })
-export class MainComponent implements OnInit {
+export class YourComponent implements OnInit {
 
-    public payPalConfig ? : PayPalConfig;
+    public payPalConfig ? : IPayPalConfig;
 
     ngOnInit(): void {
-        this.initPaypal();
+        this.initConfig();
     }
 
     private initConfig(): void {
-        this.payPalConfig = new PayPalConfig({
+        this.payPalConfig = {
             currency: 'EUR',
             clientId: 'sb',
             createOrder: (data) => < ICreateOrderRequest > {
@@ -126,7 +123,67 @@ export class MainComponent implements OnInit {
                 console.log('onClick');
                 this.resetStatus();
             },
-        });
+        };
+    }
+}
+```
+
+## Creating orders on server
+
+```typescript
+import {
+    Component,
+    OnInit
+} from '@angular/core';
+import {
+    IPayPalConfig,
+    ICreateOrderRequest 
+} from 'ngx-paypal';
+
+@Component({
+    templateUrl: './your.component.html',
+})
+export class YourComponent implements OnInit {
+
+    public payPalConfig?: IPayPalConfig;
+
+    ngOnInit(): void {
+        this.initConfig();
+    }
+
+    private initConfig(): void {
+        this.payPalConfig = {
+            clientId: 'sb',
+            // for creating orders (transactions) on server see
+            // https://developer.paypal.com/docs/checkout/reference/server-integration/set-up-transaction/
+            createOrderOnServer: (data) => fetch('/my-server/create-paypal-transaction')
+                .then((res) => res.json())
+                .then((order) => data.orderID),
+            onApprove: (data, actions) => {
+                console.log('onApprove - transaction was approved, but not authorized', data, actions);
+                actions.order.get().then(details => {
+                    console.log('onApprove - you can get full order details inside onApprove: ', details);
+                });
+
+            },
+            onClientAuthorization: (data) => {
+                console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+                this.showSuccess = true;
+            },
+            onCancel: (data, actions) => {
+                console.log('OnCancel', data, actions);
+                this.showCancel = true;
+
+            },
+            onError: err => {
+                console.log('OnError', err);
+                this.showError = true;
+            },
+            onClick: () => {
+                console.log('onClick');
+                this.resetStatus();
+            },
+        };
     }
 }
 ```

@@ -1,78 +1,65 @@
 
-export class PayPalConfig {
+export interface IPayPalConfig {
 
     /**
      * Currency - Defaults to USD if not provided
      */
-    public currency?: string;
+    currency?: string;
 
     /**
-    * Order to be created
+    * Use when creating order on client
     */
-    public createOrder!: (data: any) => ICreateOrderRequest;
+    createOrderOnClient?: (data: any) => ICreateOrderRequest;
+
+    /**
+     * Use for creating orders on server. PayPal expects you to return 'orderId' in this method
+     */
+    createOrderOnServer?: (data: any) => Promise<number>;
 
     /**
      * Advanced configuration
      */
-    public advanced?: IAdvancedConfiguration;
+    advanced?: IAdvancedConfiguration;
 
     /**
      * Client id
      */
-    public clientId!: string;
+    clientId: string;
 
     /**
      * Called when 'onApprove' event occurs
      */
-    public onApprove!: (data: IOnApproveCallbackData, actions: any) => void;
+    onApprove: (data: IOnApproveCallbackData, actions: any) => void;
 
     /**
     * Called when authorization on client succeeds
     */
-    public onClientAuthorization?: (authorization: IClientAuthorizeCallbackData) => void;
+    onClientAuthorization?: (authorization: IClientAuthorizeCallbackData) => void;
 
     /**
      * Implement for authorizing on server side
      */
-    public authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void;
+    authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void;
 
     /**
      * Button style configuration
      */
-    public style?: IPayPalButtonStyle;
+    style?: IPayPalButtonStyle;
 
     /**
      * Error handler
      */
-    public onError?: (err: any) => void;
+    onError?: (err: any) => void;
 
     /**
      * Click handler
      */
-    public onClick?: () => void;
+    onClick?: () => void;
 
     /**
      * Cancel handler
      */
     onCancel?: (data: ICancelCallbackData, actions: any) => void;
-
-    constructor(
-        config: {
-            clientId: string,
-            onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => void,
-            createOrder: (data: any) => ICreateOrderRequest,
-
-            onClientAuthorization?: (authorization: IClientAuthorizeCallbackData) => void,
-            advanced?: IAdvancedConfiguration,
-            authorizeOnServer?: (data: IOnApproveCallbackData, actions: any) => void,
-            currency?: string;
-            onError?: (err: any) => void,
-            onClick?: () => void,
-            onCancel?: (data: ICancelCallbackData, actions: any) => void,
-            style?: IPayPalButtonStyle,
-        }) {
-        Object.assign(this, config);
-    }
 }
 
 export interface IClientAuthorizeCallbackData extends IOrderDetails {

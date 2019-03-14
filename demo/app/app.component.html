@@ -29,8 +29,7 @@
 <div class="mt-2">
   I strongly recommend checking out PayPal's <a
     href="https://developer.paypal.com/docs/checkout/#try-the-buttons">official docs</a> if you want to learn more about
-  the flow of checkout process and meaning behind certain properties. If this library helped you, why not give it some
-  <a href="https://github.com/Enngage/ngx-paypal">star?</a> :)
+  the flow of checkout process and meaning behind certain properties.
 </div>
 
 <h2 class="mt-4">
@@ -89,9 +88,14 @@
         <td>Executed when PayPal transaction was approved (but not authorized)</td>
       </tr>
       <tr>
-        <td><strong>createOrder</strong></td>
+        <td><strong>createOrderOnClient</strong></td>
         <td>(data) => ICreateOrderRequest</td>
-        <td>Used to create order request</td>
+        <td>Use to create order on client. Either this, or 'createOrderOnServer' need to be defined</td>
+      </tr>
+      <tr>
+        <td><strong>createOrderOnServer</strong></td>
+        <td>(data) => ICreateOrderRequest</td>
+        <td>Use to create order on server. Either this, or 'createOrderOnClient' need to be defined</td>
       </tr>
       <tr>
         <td>onClientAuthorization</td>

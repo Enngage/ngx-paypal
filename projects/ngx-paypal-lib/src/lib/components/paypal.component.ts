@@ -18,7 +18,7 @@ import {
     IOnApproveCallbackActions,
     IOnApproveCallbackData,
     IQueryParam,
-    PayPalConfig,
+    IPayPalConfig,
 } from '../models/paypal-models';
 import { ScriptService } from '../services/script.service';
 
@@ -34,7 +34,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     /**
      * Configuration for paypal.
      */
-    @Input() config?: PayPalConfig;
+    @Input() config?: IPayPalConfig;
 
     /**
     * Name of the global variable where paypal is stored
@@ -104,7 +104,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         }
     }
 
-    private getPayPalSdkUrl(config: PayPalConfig): string {
+    private getPayPalSdkUrl(config: IPayPalConfig): string {
         const params: IQueryParam[] = [
             {
                 name: 'client-id',
@@ -134,7 +134,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         return `https://www.paypal.com/sdk/js${this.getQueryString(params)}`;
     }
 
-    private initPayPalScript(config: PayPalConfig, initPayPal: (paypal: any) => void): void {
+    private initPayPalScript(config: IPayPalConfig, initPayPal: (paypal: any) => void): void {
         this.scriptService.registerScript(this.getPayPalSdkUrl(config), this.paypalWindowName, (paypal) => {
             initPayPal(paypal);
         });
@@ -161,13 +161,31 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         return `ngx-captcha-id-${new Date().valueOf()}`;
     }
 
-    private initPayPal(config: PayPalConfig, paypal: any): void {
+    private initPayPal(config: IPayPalConfig, paypal: any): void {
         // https://developer.paypal.com/docs/checkout/integrate/#2-add-the-paypal-script-to-your-web-page
         paypal.Buttons({
             style: config.style,
 
             createOrder: (data: any, actions: ICreateOrderCallbackActions) => {
-                return actions.order.create(config.createOrder(data));
+                if (config.createOrderOnClient && config.createOrderOnServer) {
+                    throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
+                        Please choose one or the other.`);
+                }
+
+                if (!config.createOrderOnClient && !config.createOrderOnServer) {
+                    throw Error(`Neither 'createOrderOnClient' or 'createOrderOnServer' are defined.
+                        Please define one of these to create order.`);
+                }
+
+                if (config.createOrderOnClient) {
+                    return actions.order.create(config.createOrderOnClient(data));
+                }
+
+                if (config.createOrderOnServer) {
+                    return config.createOrderOnServer(data);
+                }
+
+                throw Error(`Invalid state for 'createOrder'.`);
             },
 
             onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {

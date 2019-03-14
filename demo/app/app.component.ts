@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 
-import { ICreateOrderRequest, PayPalConfig } from '../../projects/ngx-paypal-lib/src/public_api';
+import { ICreateOrderRequest, IPayPalConfig } from '../../projects/ngx-paypal-lib/src/public_api';
 
 declare var hljs: any;
 
@@ -10,7 +10,7 @@ declare var hljs: any;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit, OnInit {
-  public payPalConfig?: PayPalConfig;
+  public payPalConfig?: IPayPalConfig;
 
   public showSuccess: boolean = false;
   public showCancel: boolean = false;
@@ -28,10 +28,10 @@ export class AppComponent implements AfterViewInit, OnInit {
   })
   `;
 
-  public readonly initPaypalCode = `this.payPalConfig = new PayPalConfig({
+  public readonly initPaypalCode = `this.payPalConfig = {
       currency: 'EUR',
       clientId: 'sb',
-      createOrder: (data) => <ICreateOrderRequest>{
+      createOrderOnClient: (data) => <ICreateOrderRequest>{
         intent: 'CAPTURE',
         purchase_units: [
           {
@@ -87,20 +87,20 @@ export class AppComponent implements AfterViewInit, OnInit {
       onClick: () => {
         console.log('onClick');
       },
-    });`;
+    };`;
 
   public readonly htmlCode = `<ngx-paypal [config]="payPalConfig"></ngx-paypal>`;
 
   public readonly usageCodeTs = `
   import { Component, OnInit } from '@angular/core';
-  import { PayPalConfig } from 'ngx-paypal';
+  import { IPayPalConfig, ICreateOrderRequest } from 'ngx-paypal';
 
   @Component({
     templateUrl: './your.component.html',
   })
   export class YourComponent implements OnInit {
 
-    public payPalConfig?: PayPalConfig;
+    public payPalConfig?: IPayPalConfig;
 
     ngOnInit(): void {
       this.initConfig();
@@ -123,10 +123,11 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
 
   private initConfig(): void {
-    this.payPalConfig = new PayPalConfig({
+    this.payPalConfig = {
       currency: 'EUR',
       clientId: 'sb',
-      createOrder: (data) => <ICreateOrderRequest>{
+
+      createOrderOnClient: (data) => <ICreateOrderRequest>{
         intent: 'CAPTURE',
         purchase_units: [
           {
@@ -165,7 +166,7 @@ export class AppComponent implements AfterViewInit, OnInit {
       },
       onApprove: (data, actions) => {
         console.log('onApprove - transaction was approved, but not authorized', data, actions);
-        actions.order.get().then(details => {
+        actions.order.get().then((details: any) => {
           console.log('onApprove - you can get full order details inside onApprove: ', details);
         });
 
@@ -187,7 +188,7 @@ export class AppComponent implements AfterViewInit, OnInit {
         console.log('onClick');
         this.resetStatus();
       },
-    });
+    };
   }
 
   private resetStatus(): void {
