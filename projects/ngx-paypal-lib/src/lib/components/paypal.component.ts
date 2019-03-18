@@ -19,6 +19,8 @@ import {
     IOnApproveCallbackData,
     IQueryParam,
     IPayPalConfig,
+    IOnShippingChangeData,
+    IOnShippingChangeActions,
 } from '../models/paypal-models';
 import { ScriptService } from '../services/script.service';
 
@@ -216,6 +218,11 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
             onCancel: (data: ICancelCallbackData, actions: any) => {
                 if (config.onCancel) {
                     config.onCancel(data, actions);
+                }
+            },
+            onShippingChange: (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
+                if (config.onShippingChange) {
+                    return config.onShippingChange(data, actions);
                 }
             },
             onClick: () => {

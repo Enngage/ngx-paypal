@@ -27,6 +27,12 @@ export interface IPayPalConfig {
     clientId: string;
 
     /**
+     * Shipping callback
+     * see https://developer.paypal.com/docs/checkout/integration-features/shipping-callback/
+     */
+    onShippingChange?: OnShippingChangeCallback;
+
+    /**
      * Called when 'onApprove' event occurs
      */
     onApprove: (data: IOnApproveCallbackData, actions: any) => void;
@@ -85,6 +91,20 @@ export interface ILinkDescription {
 export interface IQueryParam {
     name: string;
     value: string;
+}
+
+export type OnShippingChangeCallback = (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => any;
+
+export interface IOnShippingChangeData {
+    paymentToken: string;
+    shipping_address: any;
+    selected_shipping_method?: any;
+}
+
+export interface IOnShippingChangeActions {
+    resolve: () => any;
+    reject: () => any;
+    patch: () => any;
 }
 
 export type LinkMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'CONNECT' | 'OPTIONS' | 'PATCH';
