@@ -99,12 +99,12 @@
       </tr>
       <tr>
         <td>onClientAuthorization</td>
-        <td>(authorization) => void</td>
+        <td>(authorization) => any</td>
         <td>Called when client authorization completes. Use this to notify your server about payment.</td>
       </tr>
       <tr>
         <td>authorizeOnServer</td>
-        <td>(data, actions) => void</td>
+        <td>(data, actions) => any</td>
         <td>If set, you should authorize payment on your server. Default client authorization is not used in this case.
         </td>
       </tr>
@@ -132,6 +132,11 @@
         <td>onClick</td>
         <td>() => void</td>
         <td>Called when user clicks on PayPal button</td>
+      </tr>
+      <tr>
+        <td>onShippingChange</td>
+        <td>(data, actions) => any</td>
+        <td>OnShippingChange callback as per <a target="_blank" href="https://developer.paypal.com/docs/checkout/integration-features/shipping-callback/">https://developer.paypal.com/docs/checkout/integration-features/shipping-callback/</a></td>
       </tr>
       <tr>
         <td>advanced</td>
