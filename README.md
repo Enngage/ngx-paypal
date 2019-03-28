@@ -253,11 +253,46 @@ export class YourComponent implements OnInit {
 
 If you want to have multiple PayPal buttons on the same page, you can do so only if they share some basic properties (e.g. currency, commit flag..) because these are configured via URL query parameters when requesting PayPal's javascript SDK. PayPal does not allow registesting multiple SDKs on the same page. 
 
-If the above is ok for scenario, configure your instances of `ngx-paypal` so that only one register script and shares its instance of SDK API. Components that should not register script need to have `registerScript` disabled. Once the script is loaded, use `scriptLoaded` event to notify all other components and pass the PayPal API via `customInit` method. See example below:
+The key is to inject `PayPalScriptService`, register script manually and then call `customInit` with the PayPal API once your component is available. Note that if you use conditions (`*ngIf`) you will have to adjust the core accordingly because of the timings and call `customInit` once both PayPalApi has loaded and your component was initialized. 
+
+```typescript
+import {
+    PayPalScriptService, IPayPalConfig
+} from 'ngx-paypal';
+
+export class YourComponent implements OnInit {
+
+    public payPalConfig?: IPayPalConfig;
+
+    @ViewChild('payPalElem1') paypalComponent1?:  NgxPaypalComponent;
+    @ViewChild('payPalElem2') paypalComponent2?:  NgxPaypalComponent;
+
+    constructor(
+        private payPalScriptService: PayPalScriptService
+    ) { }
+
+    ngOnInit(): void {
+        this.payPalConfig = {}; // your paypal config
+
+        this.payPalScriptService.registerPayPalScript({
+        clientId: 'sb',
+        currency: 'EUR'
+        }, (payPalApi) => {
+            if (this.paypalComponent1) {
+                this.paypalComponent1.customInit(payPalApi);
+            }
+
+            if (this.paypalComponent2) {
+                this.paypalComponent2.customInit(payPalApi);
+            }
+        });
+    }
+}
+```
 
 ```html
-  <ngx-paypal [config]="payPalConfig" (scriptLoaded)="secondPayPalElem.customInit($event)"></ngx-paypal>
-  <ngx-paypal [config]="differentPayPalConfig" [registerScript]="false" #secondPayPalElem></ngx-paypal>
+  <ngx-paypal #payPalElem1 [config]="payPalConfig" [registerScript]="false"></ngx-paypal>
+  <ngx-paypal #payPalElem2 [config]="payPalConfig" [registerScript]="false"></ngx-paypal>
 ```
 
 

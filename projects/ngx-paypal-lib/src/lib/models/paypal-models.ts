@@ -68,6 +68,15 @@ export interface IPayPalConfig {
     onCancel?: (data: ICancelCallbackData, actions: any) => void;
 }
 
+export type TrueFalse = 'true' | 'false';
+
+export interface IPayPalUrlConfig {
+    clientId: string;
+    currency?: string;
+    commit?: TrueFalse;
+    extraParams?: IQueryParam[];
+}
+
 export interface IClientAuthorizeCallbackData extends IOrderDetails {
     links: ILinkDescription[];
 }
@@ -110,9 +119,7 @@ export interface IOnShippingChangeActions {
 export type LinkMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'CONNECT' | 'OPTIONS' | 'PATCH';
 
 export interface IAdvancedConfiguration {
-    updateOrderDetails?: {
-        commit?: boolean
-    };
+    commit?: TrueFalse;
     extraQueryParams?: IQueryParam[];
 }
 

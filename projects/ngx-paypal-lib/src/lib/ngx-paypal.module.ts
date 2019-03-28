@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { NgxPaypalComponent } from './components/paypal.component';
 import { ScriptService } from './services/script.service';
+import { PayPalScriptService } from './services/paypal-script.service';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { ScriptService } from './services/script.service';
     NgxPaypalComponent,
   ],
   providers: [
-    ScriptService
+    ScriptService,
+    PayPalScriptService
   ]
 })
 export class NgxPayPalModule {

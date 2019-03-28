@@ -3,13 +3,13 @@ import {
     ChangeDetectionStrategy,
     Component,
     ElementRef,
+    EventEmitter,
     Input,
     OnChanges,
     OnDestroy,
+    Output,
     SimpleChanges,
     ViewChild,
-    Output,
-    EventEmitter,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -19,12 +19,11 @@ import {
     ICreateOrderCallbackActions,
     IOnApproveCallbackActions,
     IOnApproveCallbackData,
-    IQueryParam,
-    IPayPalConfig,
-    IOnShippingChangeData,
     IOnShippingChangeActions,
+    IOnShippingChangeData,
+    IPayPalConfig,
 } from '../models/paypal-models';
-import { ScriptService } from '../services/script.service';
+import { PayPalScriptService } from '../services/paypal-script.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,11 +51,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     @Output() scriptLoaded = new EventEmitter<any>();
 
     /**
-    * Name of the global variable where paypal is stored
-    */
-    private readonly paypalWindowName = 'paypal';
-
-    /**
      * Id of the element where PayPal button will be rendered
      */
     public payPalButtonContainerId?: string;
@@ -79,7 +73,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     private payPal: any;
 
     constructor(
-        private scriptService: ScriptService,
+        private paypalScriptService: PayPalScriptService,
     ) {
     }
 
@@ -123,58 +117,16 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         }
     }
 
-    private getPayPalSdkUrl(config: IPayPalConfig): string {
-        const params: IQueryParam[] = [
-            {
-                name: 'client-id',
-                value: config.clientId
-            }
-        ];
-
-        if (config.currency) {
-            params.push({
-                name: 'currency',
-                value: config.currency
-            });
-        }
-
-        if (config.advanced && config.advanced.updateOrderDetails) {
-            params.push({
-                name: 'commit',
-                value: config.advanced.updateOrderDetails.commit ? 'true' : 'false'
-            });
-        }
-
-        // add extra query params
-        if (config.advanced && config.advanced.extraQueryParams) {
-            params.push(...config.advanced.extraQueryParams);
-        }
-
-        return `https://www.paypal.com/sdk/js${this.getQueryString(params)}`;
-    }
-
     private initPayPalScript(config: IPayPalConfig, initPayPal: (paypal: any) => void): void {
-        this.scriptService.registerScript(this.getPayPalSdkUrl(config), this.paypalWindowName, (paypal) => {
+        this.paypalScriptService.registerPayPalScript({
+            clientId: config.clientId,
+            commit: config.advanced && config.advanced.commit ? config.advanced.commit : undefined,
+            currency: config.currency,
+            extraParams: config.advanced && config.advanced.extraQueryParams ? config.advanced.extraQueryParams : []
+        }, (paypal) => {
             this.scriptLoaded.next(paypal);
             initPayPal(paypal);
         });
-    }
-
-    private getQueryString(queryParams: IQueryParam[]): string {
-        let queryString = '';
-
-        for (let i = 0; i < queryParams.length; i++) {
-            const queryParam = queryParams[i];
-            if (i === 0) {
-                queryString += '?';
-            } else {
-                queryString += '&';
-            }
-
-            queryString += `${queryParam.name}=${queryParam.value}`;
-        }
-
-        return queryString;
     }
 
     private generateElementId(): string {
