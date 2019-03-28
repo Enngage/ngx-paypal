@@ -249,6 +249,18 @@ export class YourComponent implements OnInit {
 }
 ```
 
+## Multiple ngx-paypal components on the same page
+
+If you want to have multiple PayPal buttons on the same page, you can do so only if they share some basic properties (e.g. currency, commit flag..) because these are configured via URL query parameters when requesting PayPal's javascript SDK. PayPal does not allow registesting multiple SDKs on the same page. 
+
+If the above is ok for scenario, configure your instances of `ngx-paypal` so that only one register script and shares its instance of SDK API. Components that should not register script need to have `registerScript` disabled. Once the script is loaded, use `scriptLoaded` event to notify all other components and pass the PayPal API via `customInit` method. See example below:
+
+```html
+  <ngx-paypal [config]="payPalConfig" (scriptLoaded)="secondPayPalElem.customInit($event)"></ngx-paypal>
+  <ngx-paypal [config]="differentPayPalConfig" [registerScript]="false" #secondPayPalElem></ngx-paypal>
+```
+
+
 ## Unit testing
 
 Unit testing in Angular is possible, but a bit clunky because this component tries to dynamically include paypals's script if its not already loaded. You are not required to include in globally or manually which has a benefit of not loading until you actually use this component. This has a caveat though, since the load callback is executed outside of Angular's zone, performing unit tests might fail due to racing condition where Angular might fail the test before the script has a chance to load and initialize captcha.

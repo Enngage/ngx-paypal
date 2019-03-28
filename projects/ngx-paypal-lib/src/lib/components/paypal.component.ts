@@ -8,6 +8,8 @@ import {
     OnDestroy,
     SimpleChanges,
     ViewChild,
+    Output,
+    EventEmitter,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -37,6 +39,17 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
      * Configuration for paypal.
      */
     @Input() config?: IPayPalConfig;
+
+    /**
+     * If enabled, paypal SDK script will be loaded. Useful if you want to have multiple PayPal components on the same page
+     * sharing base configuration. In such a case only a single component may register script.
+     */
+    @Input() registerScript: boolean = true;
+
+    /**
+     * Emitted when paypal script is loaded
+     */
+    @Output() scriptLoaded = new EventEmitter<any>();
 
     /**
     * Name of the global variable where paypal is stored
@@ -77,7 +90,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
         // init when config once its available
         const config = this.config;
-        if (config) {
+        if (config && this.registerScript) {
             this.initPayPalScript(config, (payPal) => {
                 // store reference to paypal global script
                 this.payPal = payPal;
@@ -95,6 +108,11 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         this.doPayPalCheck();
     }
 
+    customInit(payPal: any): void {
+        this.payPal = payPal;
+        this.doPayPalCheck();
+    }
+
     private doPayPalCheck(): void {
         if (this.initializePayPal && this.config && this.payPal && this.payPalButtonContainerElem) {
             // make sure that id is also set
@@ -102,7 +120,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                 this.initializePayPal = false;
                 this.initPayPal(this.config, this.payPal);
             }
-
         }
     }
 
@@ -138,6 +155,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     private initPayPalScript(config: IPayPalConfig, initPayPal: (paypal: any) => void): void {
         this.scriptService.registerScript(this.getPayPalSdkUrl(config), this.paypalWindowName, (paypal) => {
+            this.scriptLoaded.next(paypal);
             initPayPal(paypal);
         });
     }
