@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 
-import { NgxPaypalComponent, ICreateOrderRequest, IPayPalConfig, PayPalScriptService } from '../../projects/ngx-paypal-lib/src/public_api';
+import { ICreateOrderRequest, IPayPalConfig } from '../../projects/ngx-paypal-lib/src/public_api';
 
 declare var hljs: any;
 
@@ -112,28 +112,10 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
   `;
 
-  @ViewChild('payPalElem1') paypalComponent1?:  NgxPaypalComponent;
-  @ViewChild('payPalElem2') paypalComponent2?:  NgxPaypalComponent;
-
-  constructor(
-    private payPalScriptService: PayPalScriptService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
     this.initConfig();
-
-    this.payPalScriptService.registerPayPalScript({
-      clientId: 'sb',
-      currency: 'EUR'
-    }, (payPalApi) => {
-      if (this.paypalComponent1) {
-        this.paypalComponent1.customInit(payPalApi);
-      }
-
-      if (this.paypalComponent2) {
-        this.paypalComponent2.customInit(payPalApi);
-      }
-    });
   }
 
   ngAfterViewInit(): void {
@@ -173,7 +155,7 @@ export class AppComponent implements AfterViewInit, OnInit {
         ]
       },
       advanced: {
-          commit: 'true'
+        commit: 'true'
       },
       style: {
         label: 'paypal',
