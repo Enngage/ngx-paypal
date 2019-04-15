@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import { ICreateOrderRequest, IPayPalConfig } from '../../projects/ngx-paypal-lib/src/public_api';
 
@@ -10,6 +10,7 @@ declare var hljs: any;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit, OnInit {
+  public defaultPrice: string = '9.99';
   public payPalConfig?: IPayPalConfig;
 
   public showSuccess: boolean = false;
@@ -112,17 +113,25 @@ export class AppComponent implements AfterViewInit, OnInit {
   }
   `;
 
+  @ViewChild('priceElem') priceElem?: ElementRef;
+
   constructor() { }
 
   ngOnInit(): void {
-    this.initConfig();
+    this.initConfig('9.99');
   }
 
   ngAfterViewInit(): void {
     this.prettify();
   }
 
-  private initConfig(): void {
+  changePrice(): void {
+    if (this.priceElem) {
+      this.initConfig(this.priceElem.nativeElement.value);
+    }
+  }
+
+  private initConfig(price: string): void {
     this.payPalConfig = {
       currency: 'EUR',
       clientId: 'sb',
@@ -132,11 +141,11 @@ export class AppComponent implements AfterViewInit, OnInit {
           {
             amount: {
               currency_code: 'EUR',
-              value: '9.99',
+              value: price,
               breakdown: {
                 item_total: {
                   currency_code: 'EUR',
-                  value: '9.99'
+                  value: price
                 }
               }
             },
@@ -147,7 +156,7 @@ export class AppComponent implements AfterViewInit, OnInit {
                 category: 'DIGITAL_GOODS',
                 unit_amount: {
                   currency_code: 'EUR',
-                  value: '9.99',
+                  value: price,
                 },
               }
             ]

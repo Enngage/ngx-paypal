@@ -18,6 +18,10 @@ export class PayPalScriptService {
         this.scriptService.registerScript(this.getUrlForConfig(config), this.paypalWindowName, onReady);
     }
 
+    destroyPayPalScript(): void {
+        this.scriptService.cleanup(this.paypalWindowName);
+    }
+
     private getUrlForConfig(config: IPayPalUrlConfig): string {
         const params: IQueryParam[] = [
             {

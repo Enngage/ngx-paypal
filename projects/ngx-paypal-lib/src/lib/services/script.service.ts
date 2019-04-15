@@ -34,15 +34,14 @@ export class ScriptService {
         document.getElementsByTagName('head')[0].appendChild(scriptElem);
     }
 
-    cleanup(url: string, globalVar: string): void {
+    cleanup(globalVar: string): void {
         (window as any)[globalVar] = undefined;
-        (window as any)[url] = undefined;
 
         // remove script from DOM
-        const elem = document.getElementById(this.getElemId(globalVar));
+        const scriptElem = document.getElementById(this.getElemId(globalVar));
 
-        if (elem) {
-            document.removeChild(elem);
+        if (scriptElem) {
+            scriptElem.remove();
         }
     }
 

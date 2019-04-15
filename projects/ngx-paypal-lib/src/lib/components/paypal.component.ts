@@ -8,8 +8,10 @@ import {
     OnChanges,
     OnDestroy,
     Output,
+    Renderer2,
     SimpleChanges,
     ViewChild,
+    ChangeDetectorRef,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -74,6 +76,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     constructor(
         private paypalScriptService: PayPalScriptService,
+        private cdr: ChangeDetectorRef
     ) {
     }
 
@@ -82,14 +85,22 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
             this.payPalButtonContainerId = this.generateElementId();
         }
 
-        // init when config once its available
+        // first time config setup
         const config = this.config;
-        if (config && this.registerScript) {
-            this.initPayPalScript(config, (payPal) => {
-                // store reference to paypal global script
-                this.payPal = payPal;
-                this.doPayPalCheck();
-            });
+
+        if (changes.config.isFirstChange()) {
+            if (config && this.registerScript) {
+                this.initPayPalScript(config, (payPal) => {
+                    // store reference to paypal global script
+                    this.payPal = payPal;
+                    this.doPayPalCheck();
+                });
+            }
+        }
+
+        // changes to config
+        if (!changes.config.isFirstChange()) {
+            this.reinitialize(config);
         }
     }
 
@@ -106,6 +117,33 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         this.payPal = payPal;
         this.doPayPalCheck();
     }
+
+    reinitialize(config: IPayPalConfig | undefined): void {
+        this.config = config;
+        this.payPalButtonContainerId = this.generateElementId();
+        this.initializePayPal = true;
+
+        if (this.payPalButtonContainerElem) {
+            while (this.payPalButtonContainerElem.nativeElement.firstChild) {
+                this.payPalButtonContainerElem.nativeElement.removeChild(this.payPalButtonContainerElem.nativeElement.firstChild);
+            }
+        }
+
+        this.cdr.detectChanges();
+
+        if (this.config) {
+            if (!this.payPal) {
+                this.initPayPalScript(this.config, (payPal) => {
+                    // store reference to paypal global script
+                    this.payPal = payPal;
+                    this.doPayPalCheck();
+                });
+            } else {
+                this.doPayPalCheck();
+            }
+        }
+    }
+
 
     private doPayPalCheck(): void {
         if (this.initializePayPal && this.config && this.payPal && this.payPalButtonContainerElem) {
