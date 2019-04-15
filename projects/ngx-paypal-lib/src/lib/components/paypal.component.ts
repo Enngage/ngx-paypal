@@ -105,6 +105,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     ngOnDestroy(): void {
+        this.paypalScriptService.destroyPayPalScript();
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     }
