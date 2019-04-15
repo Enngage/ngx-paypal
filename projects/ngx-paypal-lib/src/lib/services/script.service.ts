@@ -9,13 +9,15 @@ export class ScriptService {
     }
 
     registerScript(url: string, globalVar: string, onReady: (globalVar: any) => void): void {
-        if ((window as any)[globalVar]) {
+        const existingGlobalVar = (window as any)[globalVar];
+        if (existingGlobalVar) {
             // global variable is present = script was already loaded
             this.zone.run(() => {
-                onReady((window as any)[globalVar]);
+                onReady(existingGlobalVar);
             });
             return;
         }
+
 
         // prepare script elem
         const scriptElem = document.createElement('script');
@@ -35,8 +37,6 @@ export class ScriptService {
     }
 
     cleanup(globalVar: string): void {
-        (window as any)[globalVar] = undefined;
-
         // remove script from DOM
         const scriptElem = document.getElementById(this.getElemId(globalVar));
 

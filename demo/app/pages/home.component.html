@@ -1,0 +1,156 @@
+<h1>Angular PayPal</h1>
+
+<div class="mt-2" *ngIf="showSuccess">
+  <div class="alert alert-success mt-2">
+    Yeah! Your <em>sandbox</em> transaction was successful.
+  </div>
+</div>
+
+<div class="mt-2" *ngIf="showError">
+  <div class="alert alert-danger mt-2">
+    Oh no! Your <em>sandbox</em> transaction failed.
+  </div>
+</div>
+
+<div class="mt-2" *ngIf="showCancel">
+  <div class="alert alert-info mt-2">
+    Your transaction was cancelled.
+  </div>
+</div>
+
+<div class="mt-2">
+  <div class="alert alert-info mt-2" role="alert">
+    This Angular library is based on <a href="https://developer.paypal.com/docs/checkout/#try-the-buttons">PayPal's
+      Javascript SDK</a>. It does not support each and every feature of the JavaScript SDK so feel free to submit issues
+    or PRs.
+  </div>
+</div>
+
+<div class="mt-2">
+  I strongly recommend checking out PayPal's <a
+    href="https://developer.paypal.com/docs/checkout/#try-the-buttons">official docs</a> if you want to learn more about
+  the flow of checkout process and meaning behind certain properties.
+</div>
+
+<h2 class="mt-4">
+  Live Preview
+</h2>
+
+<div class="mt-2">
+  <ngx-paypal [config]="payPalConfig"></ngx-paypal>
+</div>
+
+<h2 class="mt-4">
+  Price
+</h2>
+
+<div class="mt-2">
+  Price: <input [value]="defaultPrice" type="text" #priceElem> <button (click)="changePrice()">Set</button>
+</div>
+
+<h2 class="mt-4">
+  Installation
+</h2>
+
+<div class="mt-2">
+  <pre>
+        <code [innerText]="npmCode"></code>
+        <code [innerText]="moduleInstallation"></code>
+    </pre>
+</div>
+
+<h2>
+  Usage
+</h2>
+
+<div class="mt-2">
+  <pre>
+        <code [innerText]="usageCodeTs"></code>
+        <code [innerText]="htmlCode"></code>
+    </pre>
+</div>
+
+<h2>
+  Configuration (
+  <em>PayPalConfig</em>)
+</h2>
+
+<div class="mt-2">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Property</th>
+        <th scope="col">Type</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>clientId</strong></td>
+        <td>string</td>
+        <td>Id of your PayPal account</td>
+      </tr>
+      <tr>
+        <td><strong>onApprove</strong></td>
+        <td>(data, actions) => void</td>
+        <td>Executed when PayPal transaction was approved (but not authorized)</td>
+      </tr>
+      <tr>
+        <td><strong>createOrderOnClient</strong></td>
+        <td>(data) => ICreateOrderRequest</td>
+        <td>Use to create order on client. Either this, or 'createOrderOnServer' need to be defined</td>
+      </tr>
+      <tr>
+        <td><strong>createOrderOnServer</strong></td>
+        <td>(data) => Promise&lt;string></td>
+        <td>Use to create order on server. Either this, or 'createOrderOnClient' need to be defined</td>
+      </tr>
+      <tr>
+        <td>onClientAuthorization</td>
+        <td>(authorization) => any</td>
+        <td>Called when client authorization completes. Use this to notify your server about payment.</td>
+      </tr>
+      <tr>
+        <td>authorizeOnServer</td>
+        <td>(data, actions) => any</td>
+        <td>If set, you should authorize payment on your server. Default client authorization is not used in this case.
+        </td>
+      </tr>
+      <tr>
+        <td>currency</td>
+        <td>string</td>
+        <td>PayPal's currency. Defaults to USD</td>
+      </tr>
+      <tr>
+        <td>button</td>
+        <td>IPayPalButtonStyle</td>
+        <td>Button configuration</td>
+      </tr>
+      <tr>
+        <td>onError</td>
+        <td>(err) => void</td>
+        <td>Called when PayPal experiences an error</td>
+      </tr>
+      <tr>
+        <td>onCancel</td>
+        <td>(data, actions) => void</td>
+        <td>Called when payment is cancelled</td>
+      </tr>
+      <tr>
+        <td>onClick</td>
+        <td>() => void</td>
+        <td>Called when user clicks on PayPal button</td>
+      </tr>
+      <tr>
+        <td>onShippingChange</td>
+        <td>(data, actions) => any</td>
+        <td>OnShippingChange callback as per <a target="_blank" href="https://developer.paypal.com/docs/checkout/integration-features/shipping-callback/">https://developer.paypal.com/docs/checkout/integration-features/shipping-callback/</a></td>
+      </tr>
+      <tr>
+        <td>advanced</td>
+        <td>IAdvancedConfiguration</td>
+        <td>Advanced configuration</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

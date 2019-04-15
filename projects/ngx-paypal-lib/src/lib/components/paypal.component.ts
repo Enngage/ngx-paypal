@@ -121,6 +121,8 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     reinitialize(config: IPayPalConfig | undefined): void {
         this.config = config;
+        this.payPal = undefined;
+        this.paypalScriptService.destroyPayPalScript();
         this.payPalButtonContainerId = this.generateElementId();
         this.initializePayPal = true;
 
@@ -135,6 +137,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         if (this.config) {
             if (!this.payPal) {
                 this.initPayPalScript(this.config, (payPal) => {
+
                     // store reference to paypal global script
                     this.payPal = payPal;
                     this.doPayPalCheck();
