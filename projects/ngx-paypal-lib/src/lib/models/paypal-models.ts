@@ -276,6 +276,11 @@ export interface IUnitAmount {
     breakdown?: IUnitBreakdown;
 }
 
+export interface IMoney {
+    currency_code: string;
+    value: string;
+}
+
 export interface IUnitBreakdown {
     item_total?: IUnitAmount;
     shipping?: IUnitAmount;
@@ -283,6 +288,7 @@ export interface IUnitBreakdown {
     tax_total?: IUnitAmount;
     insurance?: IUnitAmount;
     shipping_discount?: IUnitAmount;
+    discount?: IMoney;
 }
 
 export interface IPartyName {
