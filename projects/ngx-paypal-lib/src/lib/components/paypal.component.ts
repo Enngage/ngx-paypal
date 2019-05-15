@@ -35,7 +35,7 @@ import { PayPalScriptService } from '../services/paypal-script.service';
     <div #payPalButtonContainer [id]="payPalButtonContainerId"></div>
     `
 })
-export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit, DoCheck {
+export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     /**
      * Configuration for paypal.
@@ -114,10 +114,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit, 
 
     ngAfterViewInit(): void {
         this.doPayPalCheck();
-    }
-
-    ngDoCheck() {
-        console.log('ngDoCheck has been called!');
     }
 
     customInit(payPal: any): void {
