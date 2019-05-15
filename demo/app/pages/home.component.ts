@@ -60,9 +60,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
         ]
       },
       advanced: {
-        updateOrderDetails: {
-          commit: true
-        }
+        commit: 'true'
       },
       style: {
         label: 'paypal',

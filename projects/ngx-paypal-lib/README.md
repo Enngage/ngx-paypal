@@ -91,9 +91,7 @@ export class YourComponent implements OnInit {
                 }]
             },
             advanced: {
-                updateOrderDetails: {
-                    commit: true
-                }
+                commit: 'true'
             },
             style: {
                 label: 'paypal',
