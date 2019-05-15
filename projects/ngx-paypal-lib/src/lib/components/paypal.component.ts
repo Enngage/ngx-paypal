@@ -1,17 +1,18 @@
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
+    DoCheck,
     ElementRef,
     EventEmitter,
     Input,
+    NgZone,
     OnChanges,
     OnDestroy,
     Output,
-    Renderer2,
     SimpleChanges,
     ViewChild,
-    ChangeDetectorRef,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -34,7 +35,7 @@ import { PayPalScriptService } from '../services/paypal-script.service';
     <div #payPalButtonContainer [id]="payPalButtonContainerId"></div>
     `
 })
-export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
+export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit, DoCheck {
 
     /**
      * Configuration for paypal.
@@ -76,7 +77,8 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     constructor(
         private paypalScriptService: PayPalScriptService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private ngZone: NgZone
     ) {
     }
 
@@ -112,6 +114,10 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.doPayPalCheck();
+    }
+
+    ngDoCheck() {
+        console.log('ngDoCheck has been called!');
     }
 
     customInit(payPal: any): void {
@@ -176,73 +182,76 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     }
 
     private initPayPal(config: IPayPalConfig, paypal: any): void {
-        // https://developer.paypal.com/docs/checkout/integrate/#2-add-the-paypal-script-to-your-web-page
-        paypal.Buttons({
-            style: config.style,
-            createOrder: (data: any, actions: ICreateOrderCallbackActions) => {
-                if (config.createOrderOnClient && config.createOrderOnServer) {
-                    throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
+        // Running outside angular zone prevents infinite ngDoCheck lifecycle calls
+        this.ngZone.runOutsideAngular(() => {
+            // https://developer.paypal.com/docs/checkout/integrate/#2-add-the-paypal-script-to-your-web-page
+            paypal.Buttons({
+                style: config.style,
+                createOrder: (data: any, actions: ICreateOrderCallbackActions) => {
+                    if (config.createOrderOnClient && config.createOrderOnServer) {
+                        throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
                         Please choose one or the other.`);
-                }
+                    }
 
-                if (!config.createOrderOnClient && !config.createOrderOnServer) {
-                    throw Error(`Neither 'createOrderOnClient' or 'createOrderOnServer' are defined.
+                    if (!config.createOrderOnClient && !config.createOrderOnServer) {
+                        throw Error(`Neither 'createOrderOnClient' or 'createOrderOnServer' are defined.
                         Please define one of these to create order.`);
-                }
+                    }
 
-                if (config.createOrderOnClient) {
-                    return actions.order.create(config.createOrderOnClient(data));
-                }
+                    if (config.createOrderOnClient) {
+                        return actions.order.create(config.createOrderOnClient(data));
+                    }
 
-                if (config.createOrderOnServer) {
-                    return config.createOrderOnServer(data);
-                }
+                    if (config.createOrderOnServer) {
+                        return config.createOrderOnServer(data);
+                    }
 
-                throw Error(`Invalid state for 'createOrder'.`);
-            },
+                    throw Error(`Invalid state for 'createOrder'.`);
+                },
 
-            onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {
-                if (config.onApprove) {
-                    config.onApprove(data, actions);
-                }
+                onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {
+                    if (config.onApprove) {
+                        config.onApprove(data, actions);
+                    }
 
-                // capture on server
-                if (config.authorizeOnServer) {
-                    return config.authorizeOnServer(data, actions);
-                }
+                    // capture on server
+                    if (config.authorizeOnServer) {
+                        return config.authorizeOnServer(data, actions);
+                    }
 
-                // capture on client
-                const onClientAuthorization = config.onClientAuthorization;
-                if (onClientAuthorization) {
-                    actions.order.capture().then((details: IClientAuthorizeCallbackData) => {
-                        onClientAuthorization(details);
-                    });
-                    return;
-                }
-            },
+                    // capture on client
+                    const onClientAuthorization = config.onClientAuthorization;
+                    if (onClientAuthorization) {
+                        actions.order.capture().then((details: IClientAuthorizeCallbackData) => {
+                            onClientAuthorization(details);
+                        });
+                        return;
+                    }
+                },
 
-            onError: (error: any) => {
-                if (config.onError) {
-                    config.onError(error);
-                }
-            },
+                onError: (error: any) => {
+                    if (config.onError) {
+                        config.onError(error);
+                    }
+                },
 
-            onCancel: (data: ICancelCallbackData, actions: any) => {
-                if (config.onCancel) {
-                    config.onCancel(data, actions);
-                }
-            },
-            onShippingChange: (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
-                if (config.onShippingChange) {
-                    return config.onShippingChange(data, actions);
-                }
-            },
-            onClick: () => {
-                if (config.onClick) {
-                    config.onClick();
-                }
-            },
-        }).render(`#${this.payPalButtonContainerId}`);
+                onCancel: (data: ICancelCallbackData, actions: any) => {
+                    if (config.onCancel) {
+                        config.onCancel(data, actions);
+                    }
+                },
+                onShippingChange: (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
+                    if (config.onShippingChange) {
+                        return config.onShippingChange(data, actions);
+                    }
+                },
+                onClick: () => {
+                    if (config.onClick) {
+                        config.onClick();
+                    }
+                },
+            }).render(`#${this.payPalButtonContainerId}`);
+        });
     }
 }
 
