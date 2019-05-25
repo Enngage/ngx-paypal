@@ -192,6 +192,9 @@ export class HomeComponent implements AfterViewInit, OnInit {
         console.log('onClick');
         this.resetStatus();
       },
+      onInit: (data, actions) => {
+        console.log('onInit', data, actions);
+      }
     };
   }
 

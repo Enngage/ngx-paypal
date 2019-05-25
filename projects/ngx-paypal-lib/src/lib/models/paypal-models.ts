@@ -66,6 +66,12 @@ export interface IPayPalConfig {
      * Cancel handler
      */
     onCancel?: (data: ICancelCallbackData, actions: any) => void;
+
+    /**
+     * Init handler.
+     * can be used for validation, see: https://developer.paypal.com/docs/checkout/integration-features/validation/#
+     */
+    onInit?: (data: IInitCallbackData, actions: IOnInitCallbackActions) => void;
 }
 
 export type TrueFalse = 'true' | 'false';
@@ -147,6 +153,15 @@ export interface IOnApproveCallbackActions {
         get: () => Promise<IOrderDetails>;
         patch: () => Promise<any>;
     };
+}
+
+export interface IOnInitCallbackActions {
+    enable: () => void;
+    disable: () => void;
+}
+
+export interface IInitCallbackData {
+
 }
 
 export interface IPayPalButtonStyle {

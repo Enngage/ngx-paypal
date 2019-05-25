@@ -25,6 +25,8 @@ import {
     IOnShippingChangeActions,
     IOnShippingChangeData,
     IPayPalConfig,
+    IInitCallbackData,
+    IOnInitCallbackActions,
 } from '../models/paypal-models';
 import { PayPalScriptService } from '../services/paypal-script.service';
 
@@ -246,6 +248,11 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                         config.onClick();
                     }
                 },
+                onInit: (data: IInitCallbackData, actions: IOnInitCallbackActions) => {
+                    	if(config.onInit){
+                            config.onInit(data, actions);
+                        }
+                }
             }).render(`#${this.payPalButtonContainerId}`);
         });
     }
