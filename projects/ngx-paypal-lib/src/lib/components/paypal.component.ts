@@ -17,16 +17,17 @@ import {
 import { Subject } from 'rxjs';
 
 import {
-    ICancelCallbackData,
-    IClientAuthorizeCallbackData,
-    ICreateOrderCallbackActions,
-    IOnApproveCallbackActions,
-    IOnApproveCallbackData,
-    IOnShippingChangeActions,
-    IOnShippingChangeData,
-    IPayPalConfig,
-    IInitCallbackData,
-    IOnInitCallbackActions,
+  ICancelCallbackData,
+  IClientAuthorizeCallbackData,
+  ICreateOrderCallbackActions,
+  IOnApproveCallbackActions,
+  IOnApproveCallbackData,
+  IOnShippingChangeActions,
+  IOnShippingChangeData,
+  IPayPalConfig,
+  IInitCallbackData,
+  IOnInitCallbackActions,
+  IOnClickCallbackActions,
 } from '../models/paypal-models';
 import { PayPalScriptService } from '../services/paypal-script.service';
 
@@ -243,9 +244,9 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                         return config.onShippingChange(data, actions);
                     }
                 },
-                onClick: () => {
+                onClick: (data: any, actions: IOnClickCallbackActions) => {
                     if (config.onClick) {
-                        config.onClick();
+                        config.onClick(data, actions);
                     }
                 },
                 onInit: (data: IInitCallbackData, actions: IOnInitCallbackActions) => {
