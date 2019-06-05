@@ -60,7 +60,7 @@ export interface IPayPalConfig {
     /**
      * Click handler
      */
-    onClick?: () => void;
+    onClick?: (data: any, actions: IOnClickCallbackActions) => void;
 
     /**
      * Cancel handler
@@ -162,6 +162,11 @@ export interface IOnInitCallbackActions {
 
 export interface IInitCallbackData {
 
+}
+
+export interface IOnClickCallbackActions {
+    resolve: () => void;
+    reject: () => void;
 }
 
 export interface IPayPalButtonStyle {

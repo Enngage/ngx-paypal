@@ -82,8 +82,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
       onError: err => {
         console.log('OnError', err);
       },
-      onClick: () => {
-        console.log('onClick');
+      onClick: (data, actions) => {
+        console.log('onClick', data, actions);
       },
     };`;
 
@@ -188,8 +188,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
         console.log('OnError', err);
         this.showError = true;
       },
-      onClick: () => {
-        console.log('onClick');
+      onClick: (data, actions) => {
+        console.log('onClick', data, actions);
         this.resetStatus();
       },
       onInit: (data, actions) => {
