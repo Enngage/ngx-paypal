@@ -117,8 +117,8 @@ export class YourComponent implements OnInit {
                 console.log('OnError', err);
                 this.showError = true;
             },
-            onClick: () => {
-                console.log('onClick');
+            onClick: (data, actions) => {
+                console.log('onClick', data, actions);
                 this.resetStatus();
             },
         };
@@ -177,8 +177,8 @@ export class YourComponent implements OnInit {
                 console.log('OnError', err);
                 this.showError = true;
             },
-            onClick: () => {
-                console.log('onClick');
+            onClick: (data, actions) => {
+                console.log('onClick', data, actions);
                 this.resetStatus();
             },
         };
@@ -238,8 +238,8 @@ export class YourComponent implements OnInit {
                 console.log('OnError', err);
                 this.showError = true;
             },
-            onClick: () => {
-                console.log('onClick');
+            onClick: (data, actions) => {
+                console.log('onClick', data, actions);
                 this.resetStatus();
             },
         };

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { ICreateOrderRequest, IPayPalConfig } from '../../../projects/ngx-paypal-lib/src/public_api';
 
@@ -82,8 +82,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
       onError: err => {
         console.log('OnError', err);
       },
-      onClick: () => {
-        console.log('onClick');
+      onClick: (data, actions) => {
+        console.log('onClick', data, actions);
       },
     };`;
 
@@ -110,7 +110,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
   `;
 
-  @ViewChild('priceElem', { static: false}) priceElem?: ElementRef;
+  @ViewChild('priceElem', { static: false }) priceElem?: ElementRef;
 
   constructor() {
   }
@@ -121,10 +121,6 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     this.prettify();
-  }
-
-  ngDoCheck(): void {
-    console.log('do check');
   }
 
   changePrice(): void {
@@ -192,8 +188,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
         console.log('OnError', err);
         this.showError = true;
       },
-      onClick: () => {
-        console.log('onClick');
+      onClick: (data, actions) => {
+        console.log('onClick', data, actions);
         this.resetStatus();
       },
       onInit: (data, actions) => {

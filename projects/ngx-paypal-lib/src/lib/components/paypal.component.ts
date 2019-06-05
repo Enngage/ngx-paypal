@@ -22,6 +22,7 @@ import {
     IInitCallbackData,
     IOnApproveCallbackActions,
     IOnApproveCallbackData,
+    IOnClickCallbackActions,
     IOnInitCallbackActions,
     IOnShippingChangeActions,
     IOnShippingChangeData,
@@ -185,29 +186,31 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
             paypal.Buttons({
                 style: config.style,
                 createOrder: (data: any, actions: ICreateOrderCallbackActions) => {
-                    if (config.createOrderOnClient && config.createOrderOnServer) {
-                        throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
+                    return this.ngZone.run(() => {
+                        if (config.createOrderOnClient && config.createOrderOnServer) {
+                            throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
                         Please choose one or the other.`);
-                    }
+                        }
 
-                    if (!config.createOrderOnClient && !config.createOrderOnServer) {
-                        throw Error(`Neither 'createOrderOnClient' or 'createOrderOnServer' are defined.
+                        if (!config.createOrderOnClient && !config.createOrderOnServer) {
+                            throw Error(`Neither 'createOrderOnClient' or 'createOrderOnServer' are defined.
                         Please define one of these to create order.`);
-                    }
+                        }
 
-                    if (config.createOrderOnClient) {
-                        return actions.order.create(config.createOrderOnClient(data));
-                    }
+                        if (config.createOrderOnClient) {
+                            return actions.order.create(config.createOrderOnClient(data));
+                        }
 
-                    if (config.createOrderOnServer) {
-                        return config.createOrderOnServer(data);
-                    }
+                        if (config.createOrderOnServer) {
+                            return config.createOrderOnServer(data);
+                        }
 
-                    throw Error(`Invalid state for 'createOrder'.`);
+                        throw Error(`Invalid state for 'createOrder'.`);
+                    });
                 },
 
                 onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {
-                    this.ngZone.run(() => {
+                    return this.ngZone.run(() => {
                         if (config.onApprove) {
                             config.onApprove(data, actions);
                         }
@@ -244,16 +247,16 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                     });
                 },
                 onShippingChange: (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
-                    this.ngZone.run(() => {
+                    return this.ngZone.run(() => {
                         if (config.onShippingChange) {
                             return config.onShippingChange(data, actions);
                         }
                     });
                 },
-                onClick: () => {
+                onClick: (data: any, actions: IOnClickCallbackActions) => {
                     this.ngZone.run(() => {
                         if (config.onClick) {
-                            config.onClick();
+                            config.onClick(data, actions);
                         }
                     });
                 },
