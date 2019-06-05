@@ -110,7 +110,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
   `;
 
-  @ViewChild('priceElem') priceElem?: ElementRef;
+  @ViewChild('priceElem', { static: false}) priceElem?: ElementRef;
 
   constructor() {
   }
@@ -121,6 +121,10 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     this.prettify();
+  }
+
+  ngDoCheck(): void {
+    console.log('do check');
   }
 
   changePrice(): void {

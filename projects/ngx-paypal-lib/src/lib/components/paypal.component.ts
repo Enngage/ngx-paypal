@@ -3,7 +3,6 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    DoCheck,
     ElementRef,
     EventEmitter,
     Input,
@@ -20,13 +19,13 @@ import {
     ICancelCallbackData,
     IClientAuthorizeCallbackData,
     ICreateOrderCallbackActions,
+    IInitCallbackData,
     IOnApproveCallbackActions,
     IOnApproveCallbackData,
+    IOnInitCallbackActions,
     IOnShippingChangeActions,
     IOnShippingChangeData,
     IPayPalConfig,
-    IInitCallbackData,
-    IOnInitCallbackActions,
 } from '../models/paypal-models';
 import { PayPalScriptService } from '../services/paypal-script.service';
 
@@ -63,7 +62,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     private readonly ngUnsubscribe: Subject<void> = new Subject<void>();
 
     private payPalButtonContainerElem?: ElementRef;
-    @ViewChild('payPalButtonContainer') set payPalButtonContainer(content: ElementRef) {
+    @ViewChild('payPalButtonContainer', { static: false }) set payPalButtonContainer(content: ElementRef) {
         this.payPalButtonContainerElem = content;
     }
 
@@ -208,50 +207,62 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                 },
 
                 onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {
-                    if (config.onApprove) {
-                        config.onApprove(data, actions);
-                    }
+                    this.ngZone.run(() => {
+                        if (config.onApprove) {
+                            config.onApprove(data, actions);
+                        }
 
-                    // capture on server
-                    if (config.authorizeOnServer) {
-                        return config.authorizeOnServer(data, actions);
-                    }
+                        // capture on server
+                        if (config.authorizeOnServer) {
+                            return config.authorizeOnServer(data, actions);
+                        }
 
-                    // capture on client
-                    const onClientAuthorization = config.onClientAuthorization;
-                    if (onClientAuthorization) {
-                        actions.order.capture().then((details: IClientAuthorizeCallbackData) => {
-                            onClientAuthorization(details);
-                        });
-                        return;
-                    }
+                        // capture on client
+                        const onClientAuthorization = config.onClientAuthorization;
+                        if (onClientAuthorization) {
+                            actions.order.capture().then((details: IClientAuthorizeCallbackData) => {
+                                onClientAuthorization(details);
+                            });
+                            return;
+                        }
+                    });
                 },
 
                 onError: (error: any) => {
-                    if (config.onError) {
-                        config.onError(error);
-                    }
+                    this.ngZone.run(() => {
+                        if (config.onError) {
+                            config.onError(error);
+                        }
+                    });
                 },
 
                 onCancel: (data: ICancelCallbackData, actions: any) => {
-                    if (config.onCancel) {
-                        config.onCancel(data, actions);
-                    }
+                    this.ngZone.run(() => {
+                        if (config.onCancel) {
+                            config.onCancel(data, actions);
+                        }
+                    });
                 },
                 onShippingChange: (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
-                    if (config.onShippingChange) {
-                        return config.onShippingChange(data, actions);
-                    }
+                    this.ngZone.run(() => {
+                        if (config.onShippingChange) {
+                            return config.onShippingChange(data, actions);
+                        }
+                    });
                 },
                 onClick: () => {
-                    if (config.onClick) {
-                        config.onClick();
-                    }
+                    this.ngZone.run(() => {
+                        if (config.onClick) {
+                            config.onClick();
+                        }
+                    });
                 },
                 onInit: (data: IInitCallbackData, actions: IOnInitCallbackActions) => {
-                    	if(config.onInit){
+                    this.ngZone.run(() => {
+                        if (config.onInit) {
                             config.onInit(data, actions);
                         }
+                    });
                 }
             }).render(`#${this.payPalButtonContainerId}`);
         });
