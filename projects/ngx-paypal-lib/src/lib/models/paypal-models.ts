@@ -95,6 +95,7 @@ export interface IOrderDetails {
     payer: IPayer;
     status: OrderStatus;
     links: ILinkDescription[];
+    purchase_units: IPurchaseUnit[];
 }
 
 export interface ILinkDescription {
