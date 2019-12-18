@@ -222,12 +222,14 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
                         // capture on client
                         const onClientAuthorization = config.onClientAuthorization;
-                        if (onClientAuthorization) {
-                            actions.order.capture().then((details: IClientAuthorizeCallbackData) => {
-                                onClientAuthorization(details);
-                            });
-                            return;
-                        }
+                            if (onClientAuthorization) {
+                                actions.order.capture().then((details: IClientAuthorizeCallbackData) => {
+                                    this.ngZone.run(() => {
+                                        onClientAuthorization(details);
+                                    })
+                                });
+                                return;
+                            }
                     });
                 },
 
