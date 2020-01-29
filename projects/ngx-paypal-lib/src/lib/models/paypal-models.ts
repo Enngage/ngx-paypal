@@ -35,7 +35,7 @@ export interface IPayPalConfig {
     /**
      * Called when 'onApprove' event occurs
      */
-    onApprove: (data: IOnApproveCallbackData, actions: any) => void;
+    onApprove?: (data: IOnApproveCallbackData, actions: any) => void;
 
     /**
     * Called when authorization on client succeeds
