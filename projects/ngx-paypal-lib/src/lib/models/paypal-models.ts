@@ -83,10 +83,6 @@ export interface IPayPalUrlConfig {
     extraParams?: IQueryParam[];
 }
 
-export interface IClientAuthorizeCallbackData extends IOrderDetails {
-    links: ILinkDescription[];
-}
-
 export interface IOrderDetails {
     create_time: string;
     update_time: string;
@@ -96,6 +92,10 @@ export interface IOrderDetails {
     status: OrderStatus;
     links: ILinkDescription[];
     purchase_units: IPurchaseUnit[];
+}
+
+export interface IClientAuthorizeCallbackData extends IOrderDetails {
+    links: ILinkDescription[];
 }
 
 export interface ILinkDescription {
