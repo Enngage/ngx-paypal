@@ -156,7 +156,7 @@ export class YourComponent implements OnInit {
             // https://developer.paypal.com/docs/checkout/reference/server-integration/set-up-transaction/
             createOrderOnServer: (data) => fetch('/my-server/create-paypal-transaction')
                 .then((res) => res.json())
-                .then((order) => data.orderID),
+                .then((order) => order.orderID),
             onApprove: (data, actions) => {
                 console.log('onApprove - transaction was approved, but not authorized', data, actions);
                 actions.order.get().then(details => {
