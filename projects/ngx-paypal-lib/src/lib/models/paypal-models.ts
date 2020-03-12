@@ -72,6 +72,12 @@ export interface IPayPalConfig {
      * can be used for validation, see: https://developer.paypal.com/docs/checkout/integration-features/validation/#
      */
     onInit?: (data: IInitCallbackData, actions: IOnInitCallbackActions) => void;
+
+    /**
+     * Create subscription handler
+     * https://developer.paypal.com/docs/subscriptions/integrate/
+     */
+    createSubscription?: (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => void;
 }
 
 export type TrueFalse = 'true' | 'false';
@@ -133,6 +139,7 @@ export interface IAdvancedConfiguration {
 export interface IOnApproveCallbackData {
     orderID: string;
     payerID: string;
+    subscriptionID: string;
 }
 
 export interface ICreateOrderCallbackActions {
@@ -161,8 +168,18 @@ export interface IOnInitCallbackActions {
     disable: () => void;
 }
 
+export interface ICreateSubscriptionCallbackActions {
+    subscription: {
+        create: (subscription: ICreateSubscriptionRequest) => Promise<any>;
+    };
+}
+
 // tslint:disable-next-line:no-empty-interface
 export interface IInitCallbackData {
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface ICreateSubscriptionCallbackData {
 }
 
 export interface IOnClickCallbackActions {
@@ -187,6 +204,11 @@ export interface ICreateOrderRequest {
     application_context?: IApplicationContext;
 
 }
+
+export interface ICreateSubscriptionRequest {
+    plan_id: string;
+}
+
 export interface IPayer {
     name?: IPartyName;
     email_address?: string;
