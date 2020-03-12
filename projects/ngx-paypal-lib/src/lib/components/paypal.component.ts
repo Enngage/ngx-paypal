@@ -27,6 +27,8 @@ import {
     IOnShippingChangeActions,
     IOnShippingChangeData,
     IPayPalConfig,
+    ICreateSubscriptionCallbackActions,
+    ICreateSubscriptionCallbackData,
 } from '../models/paypal-models';
 import { PayPalScriptService } from '../services/paypal-script.service';
 
@@ -266,6 +268,13 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                     this.ngZone.run(() => {
                         if (config.onInit) {
                             config.onInit(data, actions);
+                        }
+                    });
+                },
+                createSubscription: (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => {
+                    this.ngZone.run(() => {
+                        if (config.createSubscription) {
+                            config.createSubscription(data, actions);
                         }
                     });
                 }
