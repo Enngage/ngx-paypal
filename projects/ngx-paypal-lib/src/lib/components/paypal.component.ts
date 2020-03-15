@@ -184,33 +184,40 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     private initPayPal(config: IPayPalConfig, paypal: any): void {
         // Running outside angular zone prevents infinite ngDoCheck lifecycle calls
         this.ngZone.runOutsideAngular(() => {
+
             // https://developer.paypal.com/docs/checkout/integrate/#2-add-the-paypal-script-to-your-web-page
-            paypal.Buttons({
+            const createOrder = (data: any, actions: ICreateOrderCallbackActions) => {
+                return this.ngZone.run(() => {
+                    if (config.createOrderOnClient && config.createOrderOnServer) {
+                        throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
+                    Please choose one or the other.`);
+                    }
+
+                    if (!config.createOrderOnClient && !config.createOrderOnServer) {
+                        throw Error(`Neither 'createOrderOnClient' or 'createOrderOnServer' are defined.
+                    Please define one of these to create order.`);
+                    }
+
+                    if (config.createOrderOnClient) {
+                        return actions.order.create(config.createOrderOnClient(data));
+                    }
+
+                    if (config.createOrderOnServer) {
+                        return config.createOrderOnServer(data);
+                    }
+
+                    throw Error(`Invalid state for 'createOrder'.`);
+                });
+            };
+            const createSubscription = (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => {
+                this.ngZone.run(() => {
+                    if (config.createSubscription) {
+                        config.createSubscription(data, actions);
+                    }
+                });
+            };
+            const buttonsConfig = {
                 style: config.style,
-                createOrder: (data: any, actions: ICreateOrderCallbackActions) => {
-                    return this.ngZone.run(() => {
-                        if (config.createOrderOnClient && config.createOrderOnServer) {
-                            throw Error(`Both 'createOrderOnClient' and 'createOrderOnServer' are defined.
-                        Please choose one or the other.`);
-                        }
-
-                        if (!config.createOrderOnClient && !config.createOrderOnServer) {
-                            throw Error(`Neither 'createOrderOnClient' or 'createOrderOnServer' are defined.
-                        Please define one of these to create order.`);
-                        }
-
-                        if (config.createOrderOnClient) {
-                            return actions.order.create(config.createOrderOnClient(data));
-                        }
-
-                        if (config.createOrderOnServer) {
-                            return config.createOrderOnServer(data);
-                        }
-
-                        throw Error(`Invalid state for 'createOrder'.`);
-                    });
-                },
-
                 onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {
                     return this.ngZone.run(() => {
                         if (config.onApprove) {
@@ -234,7 +241,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                         }
                     });
                 },
-
                 onError: (error: any) => {
                     this.ngZone.run(() => {
                         if (config.onError) {
@@ -242,7 +248,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                         }
                     });
                 },
-
                 onCancel: (data: ICancelCallbackData, actions: any) => {
                     this.ngZone.run(() => {
                         if (config.onCancel) {
@@ -271,16 +276,13 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                         }
                     });
                 },
-                createSubscription: (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => {
-                    this.ngZone.run(() => {
-                        if (config.createSubscription) {
-                            config.createSubscription(data, actions);
-                        }
-                    });
-                }
-            }).render(`#${this.payPalButtonContainerId}`);
+                // Add the functions if they've been created in the config object
+                // The API only allows one of the two to be set
+                ...((config.createOrderOnClient || config.createOrderOnServer) && { createOrder }),
+                ...(config.createSubscription && { createSubscription })
+            };
+            paypal.Buttons(buttonsConfig).render(`#${this.payPalButtonContainerId}`);
         });
     }
 }
-
 
