@@ -217,6 +217,13 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                     }
                 });
             };
+            const onShippingChange = (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
+                return this.ngZone.run(() => {
+                    if (config.onShippingChange) {
+                        return config.onShippingChange(data, actions);
+                    }
+                });
+            };
             const buttonsConfig = {
                 style: config.style,
                 onApprove: (data: IOnApproveCallbackData, actions: IOnApproveCallbackActions) => {
@@ -256,13 +263,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                         }
                     });
                 },
-                onShippingChange: (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
-                    return this.ngZone.run(() => {
-                        if (config.onShippingChange) {
-                            return config.onShippingChange(data, actions);
-                        }
-                    });
-                },
                 onClick: (data: any, actions: IOnClickCallbackActions) => {
                     this.ngZone.run(() => {
                         if (config.onClick) {
@@ -280,7 +280,10 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                 // Add the functions if they've been created in the config object
                 // The API only allows one of the two to be set
                 ...((config.createOrderOnClient || config.createOrderOnServer) && { createOrder }),
-                ...(config.createSubscription && { createSubscription })
+                ...(config.createSubscription && { createSubscription }),
+                // The onShippingChange callback cannot be used with subscriptions
+                // so we only add it if it is set
+                ...(config.onShippingChange && { onShippingChange })
             };
             paypal.Buttons(buttonsConfig).render(`#${this.payPalButtonContainerId}`);
         });
