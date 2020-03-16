@@ -211,9 +211,9 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                 });
             };
             const createSubscription = (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => {
-                this.ngZone.run(() => {
+                return this.ngZone.run(() => {
                     if (config.createSubscription) {
-                        config.createSubscription(data, actions);
+                        return config.createSubscription(data, actions);
                     }
                 });
             };
