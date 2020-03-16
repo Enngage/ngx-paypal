@@ -44,6 +44,13 @@ export class PayPalScriptService {
             });
         }
 
+        if (config.vault) {
+            params.push({
+                name: 'vault',
+                value: config.vault
+            });
+        }
+
         if (config.extraParams) {
             params.push(...config.extraParams);
         }

@@ -170,6 +170,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
             clientId: config.clientId,
             commit: config.advanced && config.advanced.commit ? config.advanced.commit : undefined,
             currency: config.currency,
+            vault: config.vault,
             extraParams: config.advanced && config.advanced.extraQueryParams ? config.advanced.extraQueryParams : []
         }, (paypal) => {
             this.scriptLoaded.next(paypal);
