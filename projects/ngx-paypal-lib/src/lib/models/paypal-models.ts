@@ -1,6 +1,5 @@
 
 export interface IPayPalConfig {
-
     /**
      * Currency - Defaults to USD if not provided
      */
@@ -76,8 +75,15 @@ export interface IPayPalConfig {
     /**
      * Create subscription handler
      * https://developer.paypal.com/docs/subscriptions/integrate/
+     *
+     * Note: the vault property in the advanced configuration also has to be set to true
      */
     createSubscription?: (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => void;
+
+    /**
+     * Vault - must be set to true when creating subscriptions
+     */
+    vault?: TrueFalse;
 }
 
 export type TrueFalse = 'true' | 'false';
@@ -86,6 +92,7 @@ export interface IPayPalUrlConfig {
     clientId: string;
     currency?: string;
     commit?: TrueFalse;
+    vault?: TrueFalse;
     extraParams?: IQueryParam[];
 }
 
