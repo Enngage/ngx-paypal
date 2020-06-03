@@ -198,7 +198,7 @@ export interface IPayPalButtonStyle {
     label?: 'paypal' | 'checkout' | 'pay' | 'installment';
     size?: 'small' | 'medium' | 'large' | 'responsive';
     shape?: 'pill' | 'rect';
-    color?: 'gold' | 'blue' | 'silver';
+    color?: 'gold' | 'blue' | 'silver' | 'white' | 'black';
     layout?: 'horizontal' | 'vertical';
     tagline?: boolean;
 }
