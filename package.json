@@ -1,13 +1,13 @@
 {
   "name": "ngx-paypal-source",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "build:demo": "ng build",
     "serve:demo": "ng serve",
     "build-demo-gh-pages": "ng build --prod",
     "publish:lib": "cd ./projects/ngx-paypal-lib && npm run publish:lib",
-    "release": "standard-version"
+    "release": "cd ./projects/ngx-paypal-lib && standard-version"
   },
   "private": true,
   "dependencies": {
