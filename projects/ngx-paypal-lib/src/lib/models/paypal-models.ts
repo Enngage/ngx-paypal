@@ -201,6 +201,7 @@ export interface IPayPalButtonStyle {
     color?: 'gold' | 'blue' | 'silver';
     layout?: 'horizontal' | 'vertical';
     tagline?: boolean;
+    height?: number;
 }
 
 export interface ICreateOrderRequest {
