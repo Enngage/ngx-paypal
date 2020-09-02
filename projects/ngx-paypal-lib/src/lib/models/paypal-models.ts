@@ -195,7 +195,7 @@ export interface IOnClickCallbackActions {
 }
 
 export interface IPayPalButtonStyle {
-    label?: 'paypal' | 'checkout' | 'pay' | 'installment';
+    label?: 'paypal' | 'checkout' | 'pay' | 'installment' | 'buynow';
     size?: 'small' | 'medium' | 'large' | 'responsive';
     shape?: 'pill' | 'rect';
     color?: 'gold' | 'blue' | 'silver';
