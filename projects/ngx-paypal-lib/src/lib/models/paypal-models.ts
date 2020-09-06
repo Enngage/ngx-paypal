@@ -225,6 +225,7 @@ export interface IPayer {
     birth_date?: string;
     tax_info?: ITaxInfo;
     address?: IAddressPortable;
+    phone?: IPhone;
 }
 
 export interface IApplicationContext {
