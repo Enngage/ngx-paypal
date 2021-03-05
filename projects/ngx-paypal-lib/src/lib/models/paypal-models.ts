@@ -11,6 +11,11 @@ export interface IPayPalConfig {
     createOrderOnClient?: (data: any) => ICreateOrderRequest;
 
     /**
+    * Use when creating subscription on client
+    */    
+    createSubscriptionOnClient?: (data: any) => ICreateSubscriptionRequest;
+
+    /**
      * Use for creating orders on server. PayPal expects you to return 'orderId' in this method
      */
     createOrderOnServer?: (data: any) => Promise<string>;
@@ -78,12 +83,13 @@ export interface IPayPalConfig {
      *
      * Note: the vault property in the advanced configuration also has to be set to true
      */
-    createSubscription?: (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => void;
+    createSubscription?: (data: any) => ICreateSubscriptionRequest;
 
     /**
      * Vault - must be set to true when creating subscriptions
      */
     vault?: TrueFalse;
+    intent?: OrderIntent;
 }
 
 export type TrueFalse = 'true' | 'false';
@@ -93,6 +99,7 @@ export interface IPayPalUrlConfig {
     currency?: string;
     commit?: TrueFalse;
     vault?: TrueFalse;
+    intent?: OrderIntent;
     extraParams?: IQueryParam[];
 }
 
@@ -195,7 +202,7 @@ export interface IOnClickCallbackActions {
 }
 
 export interface IPayPalButtonStyle {
-    label?: 'paypal' | 'checkout' | 'pay' | 'installment' | 'buynow';
+    label?: 'paypal' | 'checkout' | 'pay' | 'installment' | 'buynow' | 'subscribe';
     size?: 'small' | 'medium' | 'large' | 'responsive';
     shape?: 'pill' | 'rect';
     color?: 'gold' | 'blue' | 'silver' | 'white' | 'black';
@@ -254,7 +261,7 @@ export type ShippingPreference = 'GET_FROM_FILE' | 'NO_SHIPPING' | 'SET_PROVIDED
 
 export type PaypalLandingPage = 'LOGIN' | 'BILLING';
 
-export type OrderIntent = 'CAPTURE' | 'AUTHORIZE';
+export type OrderIntent = 'CAPTURE' | 'AUTHORIZE' | 'subscription';
 
 export type DisbursementMode = 'INSTANT' | 'DELAYED';
 
