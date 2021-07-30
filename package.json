@@ -21,6 +21,7 @@
     "@angular/router": "12.1.4",
     "core-js": "3.8.3",
     "rxjs": "6.6.3",
+    "sass": "^1.35.1",
     "zone.js": "0.11.4"
   },
   "devDependencies": {
@@ -42,7 +43,6 @@
     "karma-jasmine": "4.0.1",
     "karma-jasmine-html-reporter": "1.5.4",
     "ng-packagr": "12.1.2",
-    "node-sass": "5.0.0",
     "protractor": "7.0.0",
     "standard-version": "9.1.0",
     "ts-node": "9.1.1",
