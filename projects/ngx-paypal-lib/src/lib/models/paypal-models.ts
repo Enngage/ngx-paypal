@@ -217,6 +217,7 @@ export interface ICreateOrderRequest {
 export interface ICreateSubscriptionRequest {
     plan_id: string;
     quantity?: number;
+  custom_id:string;
 }
 
 export interface IPayer {
