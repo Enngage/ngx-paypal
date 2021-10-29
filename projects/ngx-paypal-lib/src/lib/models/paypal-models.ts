@@ -209,6 +209,7 @@ export interface IPayPalButtonStyle {
     layout?: 'horizontal' | 'vertical';
     tagline?: boolean;
     height?: number;
+    fundingicons?: boolean;
 }
 
 export interface ICreateOrderRequest {
