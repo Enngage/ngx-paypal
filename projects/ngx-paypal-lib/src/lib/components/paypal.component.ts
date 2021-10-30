@@ -171,6 +171,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
             commit: config.advanced && config.advanced.commit ? config.advanced.commit : undefined,
             currency: config.currency,
             vault: config.vault,
+            intent: config.intent,
             extraParams: config.advanced && config.advanced.extraQueryParams ? config.advanced.extraQueryParams : []
         }, (paypal) => {
             this.scriptLoaded.next(paypal);
@@ -212,9 +213,9 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
             };
             const createSubscription = (data: ICreateSubscriptionCallbackData, actions: ICreateSubscriptionCallbackActions) => {
                 return this.ngZone.run(() => {
-                    if (config.createSubscription) {
-                        return config.createSubscription(data, actions);
-                    }
+                    if (config.createSubscriptionOnClient) {
+                        return actions.subscription.create(config.createSubscriptionOnClient(data));
+                    }                    
                 });
             };
             const onShippingChange = (data: IOnShippingChangeData, actions: IOnShippingChangeActions) => {
@@ -280,7 +281,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                 // Add the functions if they've been created in the config object
                 // The API only allows one of the two to be set
                 ...((config.createOrderOnClient || config.createOrderOnServer) && { createOrder }),
-                ...(config.createSubscription && { createSubscription }),
+                ...((config.createSubscriptionOnClient ) && { createSubscription }),
                 // The onShippingChange callback cannot be used with subscriptions
                 // so we only add it if it is set
                 ...(config.onShippingChange && { onShippingChange })
