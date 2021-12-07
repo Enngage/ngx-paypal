@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist-demo",
+            "outputPath": "docs",
             "index": "demo/index.html",
             "main": "demo/main.ts",
             "polyfills": "demo/polyfills.ts",
@@ -38,7 +38,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,

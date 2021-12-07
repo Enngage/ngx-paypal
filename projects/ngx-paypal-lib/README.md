@@ -8,11 +8,11 @@ PayPal integration for Angular. For live example and documentation visit [https:
 
  This Angular library is based on PayPal's [Javascript SDK](https://developer.paypal.com/docs/checkout/#try-the-buttons). It does not support each and every feature of the JavaScript SDK so feel free to submit issues or PRs.
 
- I strongly recommend checking out PayPal's docs linked above if you want to learn more about the flow of checkout process and meaning behind certain properties. There are ton of properties you can set within the `createOrder` method and good IDE will show you these properties so use that, I don't find it particulary useful to list all properties and their description here - PayPal docs is your friend.
+ I strongly recommend checking out PayPal's docs linked above if you want to learn more about the flow of checkout process and meaning behind certain properties. There are ton of properties you can set within the `createOrderOnClient` method and good IDE will show you these properties so use that, I don't find it particulary useful to list all properties and their description here - PayPal docs is your friend.
 
 ## Installation
 
-```javascript
+```bash
 npm install ngx-paypal --save
 ```
 
@@ -66,7 +66,7 @@ export class YourComponent implements OnInit {
         this.payPalConfig = {
             currency: 'EUR',
             clientId: 'sb',
-            createOrder: (data) => < ICreateOrderRequest > {
+            createOrderOnClient: (data) => < ICreateOrderRequest > {
                 intent: 'CAPTURE',
                 purchase_units: [{
                     amount: {
@@ -120,7 +120,7 @@ export class YourComponent implements OnInit {
             onClick: (data, actions) => {
                 console.log('onClick', data, actions);
                 this.resetStatus();
-            },
+            }
         };
     }
 }
@@ -156,7 +156,7 @@ export class YourComponent implements OnInit {
             // https://developer.paypal.com/docs/checkout/reference/server-integration/set-up-transaction/
             createOrderOnServer: (data) => fetch('/my-server/create-paypal-transaction')
                 .then((res) => res.json())
-                .then((order) => data.orderID),
+                .then((order) => order.orderID),
             onApprove: (data, actions) => {
                 console.log('onApprove - transaction was approved, but not authorized', data, actions);
                 actions.order.get().then(details => {
@@ -320,13 +320,3 @@ Under `projects\ngx-paypal-lib` run
 ```
 npm run publish-lib
 ```
-
-### Publishing demo app
-
-Under root, generate demo app with
-
-```
-npm run build-demo-gh-pages
-npx ngh --dir=dist-demo
-```
-
