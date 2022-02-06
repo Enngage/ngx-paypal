@@ -137,7 +137,9 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                 while (this.payPalButtonContainerElem.nativeElement.firstChild) {
                     this.payPalButtonContainerElem.nativeElement.removeChild(this.payPalButtonContainerElem.nativeElement.firstChild);
                 }
-            } catch (e) { }
+            } catch (error) {
+                console.error(error);
+            }
         }
 
         this.cdr.detectChanges();
