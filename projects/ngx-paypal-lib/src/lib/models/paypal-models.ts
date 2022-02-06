@@ -185,6 +185,7 @@ export interface IOnInitCallbackActions {
 export interface ICreateSubscriptionCallbackActions {
     subscription: {
         create: (subscription: ICreateSubscriptionRequest) => Promise<any>;
+        revise: (subscriptionId: string, subscription: ICreateSubscriptionRequest) => Promise<any>;
     };
 }
 
