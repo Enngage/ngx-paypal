@@ -41,8 +41,6 @@ import {PayPalScriptService} from '../services/paypal-script.service';
 })
 export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
 
-  @Input()
-  divId: number | undefined;
   /**
    * Configuration for PayPal.
    */
