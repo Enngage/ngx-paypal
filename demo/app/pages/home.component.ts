@@ -1,15 +1,25 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 
-import { ICreateOrderRequest, IPayPalConfig } from '../../../projects/ngx-paypal-lib/src/public_api';
+import {
+  ICreateOrderRequest,
+  IPayPalConfig,
+} from "../../../projects/ngx-paypal-lib/src/public_api";
 
 declare var hljs: any;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './home.component.html',
+  templateUrl: "./home.component.html",
 })
 export class HomeComponent implements AfterViewInit, OnInit {
-  public defaultPrice: string = '9.99';
+  public defaultPrice: string = "9.99";
   public payPalConfig?: IPayPalConfig;
 
   public showSuccess: boolean = false;
@@ -110,13 +120,12 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
   `;
 
-  @ViewChild('priceElem', { static: false }) priceElem?: ElementRef;
+  @ViewChild("priceElem", { static: false }) priceElem?: ElementRef;
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnInit(): void {
-    this.initConfig('9.99');
+    this.initConfig("9.99");
   }
 
   ngAfterViewInit(): void {
@@ -131,70 +140,81 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
   private initConfig(price: string): void {
     this.payPalConfig = {
-      currency: 'EUR',
-      clientId: 'sb',
-      createOrderOnClient: (data) => <ICreateOrderRequest>{
-        intent: 'CAPTURE',
-        purchase_units: [
-          {
-            amount: {
-              currency_code: 'EUR',
-              value: price,
-              breakdown: {
-                item_total: {
-                  currency_code: 'EUR',
-                  value: price
-                }
-              }
-            },
-            items: [
-              {
-                name: 'Enterprise Subscription',
-                quantity: '1',
-                category: 'DIGITAL_GOODS',
-                unit_amount: {
-                  currency_code: 'EUR',
-                  value: price,
+      currency: "EUR",
+      clientId: "sb",
+      createOrderOnClient: (data) =>
+        <ICreateOrderRequest>{
+          intent: "CAPTURE",
+          purchase_units: [
+            {
+              amount: {
+                currency_code: "EUR",
+                value: price,
+                breakdown: {
+                  item_total: {
+                    currency_code: "EUR",
+                    value: price,
+                  },
                 },
-              }
-            ]
-          }
-        ]
-      },
+              },
+              items: [
+                {
+                  name: "Enterprise Subscription",
+                  quantity: "1",
+                  category: "DIGITAL_GOODS",
+                  unit_amount: {
+                    currency_code: "EUR",
+                    value: price,
+                  },
+                },
+              ],
+            },
+          ],
+        },
       advanced: {
-        commit: 'true'
+        commit: "true",
       },
       style: {
-        label: 'paypal',
-        layout: 'vertical'
+        shape: "pill",
+        color: "blue",
+        label: "paypal",
+        layout: "vertical",
       },
       onApprove: (data, actions) => {
-        console.log('onApprove - transaction was approved, but not authorized', data, actions);
+        console.log(
+          "onApprove - transaction was approved, but not authorized",
+          data,
+          actions
+        );
         actions.order.get().then((details: any) => {
-          console.log('onApprove - you can get full order details inside onApprove: ', details);
+          console.log(
+            "onApprove - you can get full order details inside onApprove: ",
+            details
+          );
         });
-
       },
       onClientAuthorization: (data) => {
-        console.log('onClientAuthorization - you should probably inform your server about completed transaction at this point', data);
+        console.log(
+          "onClientAuthorization - you should probably inform your server about completed transaction at this point",
+          data
+        );
         this.showSuccess = true;
       },
       onCancel: (data, actions) => {
-        console.log('OnCancel', data, actions);
+        console.log("OnCancel", data, actions);
         this.showCancel = true;
-
       },
-      onError: err => {
-        console.log('OnError', err);
+      onError: (err) => {
+        console.log("OnError", err);
         this.showError = true;
       },
       onClick: (data, actions) => {
-        console.log('onClick', data, actions);
+        console.log("onClick", data, actions);
         this.resetStatus();
       },
       onInit: (data, actions) => {
-        console.log('onInit', data, actions);
-      }
+        console.log("onInit", data, actions);
+      },
     };
   }
 
