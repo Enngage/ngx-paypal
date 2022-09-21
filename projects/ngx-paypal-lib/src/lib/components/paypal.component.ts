@@ -180,6 +180,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
     this.paypalScriptService.registerPayPalScript(
       {
         clientId: config.clientId,
+        locale: config.advanced?.locale,
         commit:
           config.advanced && config.advanced.commit
             ? config.advanced.commit

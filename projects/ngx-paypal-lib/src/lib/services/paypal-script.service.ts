@@ -30,6 +30,13 @@ export class PayPalScriptService {
             }
         ];
 
+        if (config.locale) {
+          params.push({
+              name: 'locale',
+              value: config.locale
+          });
+      }
+
         if (config.currency) {
             params.push({
                 name: 'currency',
@@ -56,7 +63,7 @@ export class PayPalScriptService {
                 name: 'intent',
                 value: config.intent
             });
-        }        
+        }
 
         if (config.extraParams) {
             params.push(...config.extraParams);
