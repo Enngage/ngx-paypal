@@ -187,6 +187,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         currency: config.currency,
         vault: config.vault,
         intent: config.intent,
+        funding: config.fundingSource != undefined || config.fundingSource != null ? true : false,
         extraParams:
           config.advanced && config.advanced.extraQueryParams
             ? config.advanced.extraQueryParams
@@ -240,6 +241,7 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
               config.createSubscriptionOnClient(data)
             );
           }
+          return;
         });
       };
       const onShippingChange = (
@@ -252,8 +254,10 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
           }
         });
       };
+
       const buttonsConfig = {
         style: config.style,
+        fundingSource: undefined,
         onApprove: (
           data: IOnApproveCallbackData,
           actions: IOnApproveCallbackActions
@@ -278,7 +282,6 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
                     onClientAuthorization(details);
                   });
                 });
-              return;
             }
           });
         },
@@ -320,6 +323,33 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         // so we only add it if it is set
         ...(config.onShippingChange && { onShippingChange }),
       };
+
+      let fundSource = undefined;
+      switch(config.fundingSource){
+        case "PAYPAL":
+          fundSource = paypal.FUNDING.PAYPAL;
+          break;
+        case "CARD":
+          fundSource = paypal.FUNDING.CARD;
+          break;
+        case "PAYLATER":
+          fundSource = paypal.FUNDING.PAYLATER;
+          break;
+        case "CREDIT":
+          fundSource = paypal.FUNDING.CREDIT;
+          break;
+        case "VENMO":
+          fundSource = paypal.FUNDING.VENMO;
+          break;
+        default:
+          break;
+      }
+      if(fundSource != undefined)
+      {
+        buttonsConfig.fundingSource = fundSource;
+        if(config.fundingSource !== "PAYPAL")
+          delete buttonsConfig.style?.color
+      }
       paypal.Buttons(buttonsConfig).render(`#${this.payPalButtonContainerId}`);
     });
   }
