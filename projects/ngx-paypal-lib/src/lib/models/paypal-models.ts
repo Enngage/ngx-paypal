@@ -92,6 +92,11 @@ export interface IPayPalConfig {
    */
   vault?: TrueFalse;
   intent?: OrderIntent;
+
+  /*
+    Select type of funding source, use it when you need set type of button you want to see, see: https://developer.paypal.com/docs/checkout/standard/customize/standalone-buttons/
+  */
+  fundingSource?: "PAYPAL" | "CARD" | "PAYLATER" | "CREDIT" | "VENMO";
 }
 
 export type TrueFalse = "true" | "false";
@@ -99,6 +104,7 @@ export type TrueFalse = "true" | "false";
 export interface IPayPalUrlConfig {
   clientId: string;
   currency?: string;
+  funding?: boolean;
   commit?: TrueFalse;
   vault?: TrueFalse;
   intent?: OrderIntent;
