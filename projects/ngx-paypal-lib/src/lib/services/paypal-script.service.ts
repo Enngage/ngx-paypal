@@ -64,6 +64,13 @@ export class PayPalScriptService {
                 value: config.intent
             });
         }
+        
+        if(config.funding) {
+          params.push({
+            name:'components',
+            value: 'buttons,funding-eligibility'
+          })
+        }
 
         if (config.extraParams) {
             params.push(...config.extraParams);
