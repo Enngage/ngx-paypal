@@ -108,6 +108,7 @@ export interface IPayPalUrlConfig {
   commit?: TrueFalse;
   vault?: TrueFalse;
   intent?: OrderIntent;
+  locale?: string;
   extraParams?: IQueryParam[];
 }
 
@@ -166,6 +167,7 @@ export type LinkMethod =
 
 export interface IAdvancedConfiguration {
   commit?: TrueFalse;
+  locale?: string;
   extraQueryParams?: IQueryParam[];
 }
 
