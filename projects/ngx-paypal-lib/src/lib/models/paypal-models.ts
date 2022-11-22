@@ -20,6 +20,12 @@ export interface IPayPalConfig {
   createOrderOnServer?: (data: any) => Promise<string>;
 
   /**
+   * Use when creating a billing agreement for recurring payments - a legacy feature similar to subscriptions.
+   * See https://developer.paypal.com/docs/api/payments.billing-agreements/v1/
+   */
+  createBillingAgreement?: () => Promise<string>;
+
+  /**
    * Advanced configuration
    */
   advanced?: IAdvancedConfiguration;
@@ -293,7 +299,7 @@ export type ShippingPreference =
 
 export type PaypalLandingPage = "LOGIN" | "BILLING";
 
-export type OrderIntent = "CAPTURE" | "AUTHORIZE" | "subscription";
+export type OrderIntent = "CAPTURE" | "AUTHORIZE" | "subscription" | "tokenize";
 
 export type DisbursementMode = "INSTANT" | "DELAYED";
 
