@@ -318,5 +318,5 @@ Versions > 5 represent completely rewrite of the library and switch to latest Pa
 Under `projects\ngx-paypal-lib` run 
 
 ```
-npm run publish-lib
+npm run publish:lib
 ```
