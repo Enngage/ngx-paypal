@@ -256,6 +256,14 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         });
       };
 
+      const createBillingAgreement = () => {
+        return this.ngZone.run(() => {
+          if (config.createBillingAgreement) {
+            return config.createBillingAgreement();
+          }
+        });
+      };
+
       const buttonsConfig = {
         style: config.style,
         fundingSource: undefined,
@@ -323,6 +331,8 @@ export class NgxPaypalComponent implements OnChanges, OnDestroy, AfterViewInit {
         // The onShippingChange callback cannot be used with subscriptions
         // so we only add it if it is set
         ...(config.onShippingChange && { onShippingChange }),
+        // only add createBillingAgreement if it is set
+        ...(config.createBillingAgreement && { createBillingAgreement }),
       };
 
       let fundSource = undefined;
